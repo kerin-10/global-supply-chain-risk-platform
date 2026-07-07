@@ -322,15 +322,17 @@
     </div>
 </aside>
 
-<!-- MAIN CONTENT -->
+
 <main class="main-content">
-    <!-- TOP BAR -->
+    
     <div class="topbar">
         <div class="d-flex align-items-center gap-3">
             <button class="topbar-btn d-md-none" onclick="document.getElementById('sidebar').classList.toggle('open')">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="topbar-title">@yield('page-title', 'Dashboard')</div>
+        <div class="topbar-title">
+        {!! trim($__env->yieldContent('page-title', 'Dashboard')) !!}
+        </div>
         </div>
         <div class="topbar-actions">
             <span class="topbar-btn">
@@ -343,7 +345,6 @@
         </div>
     </div>
 
-    <!-- FLASH MESSAGES -->
     <div class="px-4 pt-3">
         @if(session('sukses'))
             <div class="alert alert-glass alert-success alert-dismissible fade show d-flex align-items-center" role="alert">

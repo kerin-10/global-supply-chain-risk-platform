@@ -15,10 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    
 
     /**
      * Halaman utama dashboard – kartu ringkasan global.
@@ -103,10 +100,34 @@ class DashboardController extends Controller
      * Halaman visualisasi grafik data.
      */
     public function visualization()
-    {
-        $negaraList = Country::with(['economicHistories', 'riskScoreHistories'])->orderBy('nama')->get();
-        return view('dashboard.visualization', compact('negaraList'));
+{
+    $negaraList = Country::with([
+        'economicHistories',
+        'currentRiskScore'
+    ])->orderBy('nama')->get();
+
+    $firstCountry = $negaraList->first();
+
+    $years = [];
+    $gdp = [];
+    $inflasi = [];
+
+    if ($firstCountry) {
+        foreach ($firstCountry->economicHistories as $row) {
+            $years[] = $row->tahun;
+            $gdp[] = $row->pdb;
+            $inflasi[] = $row->inflasi;
+        }
     }
+
+    return view('dashboard.visualization', compact(
+        'negaraList',
+        'years',
+        'gdp',
+        'inflasi',
+        'firstCountry'
+    ));
+}
 
     /**
      * Halaman daftar pantau (watchlist / favorit negara pengguna).

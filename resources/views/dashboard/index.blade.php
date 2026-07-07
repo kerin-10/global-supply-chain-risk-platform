@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Dashboard Utama')
-@section('page-title', '<i class="fas fa-tachometer-alt me-2" style="color:#3b82f6;"></i>Dashboard Utama')
+@section('page-title')
+<i class="fas fa-tachometer-alt me-2" style="color:#3b82f6;"></i> Dashboard Utama
+@endsection
 
 @push('styles')
 <style>
