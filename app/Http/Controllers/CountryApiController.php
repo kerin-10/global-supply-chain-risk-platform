@@ -480,6 +480,7 @@ class CountryApiController extends Controller
 
     public function syncAllCountries()
     {
+
         $countries = Country::orderBy('nama')->get();
 
         foreach ($countries as $country) {
@@ -702,15 +703,14 @@ class CountryApiController extends Controller
 
             return response()->json([
                 'status' => 'sukses',
-                'pesan' => "Berhasil menyinkronkan {$berhasilSync} pelabuhan dari " . count($allPorts) . " total data API.",
+                'pesan' => 'Sinkronisasi pelabuhan selesai.',
                 'detail' => [
                     'total_dari_api' => count($allPorts),
-                    'berhasil_sync' => $berhasilSync,
+                    'diproses' => $berhasilSync,
                     'gagal_cocok_negara' => $gagalMatch,
                     'total_pelabuhan_db' => Port::count()
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error("Gagal sinkronisasi pelabuhan global: " . $e->getMessage());
             return response()->json([

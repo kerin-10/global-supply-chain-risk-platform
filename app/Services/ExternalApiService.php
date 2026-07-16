@@ -28,8 +28,15 @@ class ExternalApiService
             $responseBody = $response->body();
             
             if ($response->successful()) {
-                return $response->json();
-            }
+    return $response->json();
+}
+
+Log::error("API {$apiName} gagal", [
+    'status' => $response->status(),
+    'body' => $response->body(),
+    'url' => $url
+]);
+
         } catch (Exception $e) {
             Log::error("Gagal memanggil API {$apiName}: " . $e->getMessage());
         } finally {
@@ -165,7 +172,8 @@ class ExternalApiService
             $data = $this->kirimPermintaan("WorldBank-{$key}", $url, 'GET', [
                'query' => [
                     'format' => 'json',
-                    'per_page' => 100
+                    'date' => '2024',
+                    'per_page' => 10
                 ] ]);
             // Hilangkan print debug dd($data) agar tidak error
            
@@ -477,7 +485,7 @@ class ExternalApiService
 
         foreach ($apis as $nama => $url) {
             try {
-                $response = Http::timeout(3)->get($url);
+                $response = Http::timeout(10)->get($url);
                 $statusKoneksi[$nama] = $response->successful() ? 'Connected' : 'Error (' . $response->status() . ')';
             } catch (Exception $e) {
                 $statusKoneksi[$nama] = 'Disconnected';

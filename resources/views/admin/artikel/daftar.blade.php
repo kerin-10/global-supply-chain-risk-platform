@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Manajemen Artikel')
-@section('page-title', '<i class="fas fa-edit me-2" style="color:var(--accent-purple);"></i>Manajemen Artikel')
+@section('page-title')
+    <i class="fas fa-edit me-2" style="color:var(--accent-purple);"></i> Manajemen Artikel
+@endsection
 
 @section('content')
 <div class="glass-card">
@@ -47,13 +49,18 @@
                         {{ $artikel->diterbitkan_pada ? $artikel->diterbitkan_pada->format('d M Y H:i') : '-' }}
                     </td>
                     <td>
-                        <form action="{{ route('admin.artikel.hapus', $artikel->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini?')" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius:6px; font-size:0.75rem; padding:0.25rem 0.5rem;" title="Hapus Artikel">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="{{ route('admin.artikel.edit', $artikel->id) }}" class="btn btn-sm btn-outline-primary" style="border-radius:6px; font-size:0.75rem; padding:0.25rem 0.5rem;" title="Edit Artikel">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('admin.artikel.hapus', $artikel->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus artikel ini?')" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius:6px; font-size:0.75rem; padding:0.25rem 0.5rem;" title="Hapus Artikel">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

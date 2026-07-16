@@ -45,18 +45,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Manajemen Pengguna
     Route::get('/pengguna',                        [AdminController::class, 'penggunaDaftar'])->name('pengguna.daftar');
+    Route::post('/pengguna',                       [AdminController::class, 'penggunaSimpan'])->name('pengguna.simpan');
+    Route::put('/pengguna/{id}',                   [AdminController::class, 'penggunaUpdate'])->name('pengguna.update');
     Route::delete('/pengguna/{id}',                [AdminController::class, 'penggunaHapus'])->name('pengguna.hapus');
     Route::patch('/pengguna/{id}/ubah-peran',      [AdminController::class, 'penggunaUbahPeran'])->name('pengguna.ubah-peran');
 
     // Manajemen Pelabuhan
     Route::get('/pelabuhan',                       [AdminController::class, 'pelabuhanDaftar'])->name('pelabuhan.daftar');
     Route::post('/pelabuhan',                      [AdminController::class, 'pelabuhanSimpan'])->name('pelabuhan.simpan');
+    Route::put('/pelabuhan/{id}',                  [AdminController::class, 'pelabuhanUpdate'])->name('pelabuhan.update');
     Route::delete('/pelabuhan/{id}',               [AdminController::class, 'pelabuhanHapus'])->name('pelabuhan.hapus');
 
     // Manajemen Artikel
     Route::get('/artikel',                         [AdminController::class, 'artikelDaftar'])->name('artikel.daftar');
     Route::get('/artikel/buat',                    [AdminController::class, 'artikelBuat'])->name('artikel.buat');
     Route::post('/artikel',                        [AdminController::class, 'artikelSimpan'])->name('artikel.simpan');
+    Route::get('/artikel/{id}/edit',               [AdminController::class, 'artikelEdit'])->name('artikel.edit');
+    Route::put('/artikel/{id}',                    [AdminController::class, 'artikelUpdate'])->name('artikel.update');
     Route::delete('/artikel/{id}',                 [AdminController::class, 'artikelHapus'])->name('artikel.hapus');
 
     // Manajemen Leksikon Sentimen

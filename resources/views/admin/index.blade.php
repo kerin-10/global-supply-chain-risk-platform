@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Panel Admin')
-@section('page-title', '<i class="fas fa-shield-alt me-2" style="color:var(--accent-purple);"></i>Panel Administrasi')
+@section('page-title')
+    <i class="fas fa-shield-alt me-2" style="color:var(--accent-purple);"></i> Panel Administrasi
+@endsection
 
 @section('content')
 <div class="row g-3 mb-4">

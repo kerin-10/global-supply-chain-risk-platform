@@ -18,10 +18,6 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'admin']);
-    }
 
     /**
      * Halaman utama Admin Dashboard.
@@ -56,6 +52,59 @@ class AdminController extends Controller
     {
         $daftar = User::with('profile')->orderBy('created_at', 'desc')->get();
         return view('admin.pengguna.daftar', compact('daftar'));
+    }
+
+    public function penggunaSimpan(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pengguna',
+            'kata_sandi' => 'required|string|min:6',
+            'peran' => 'required|in:admin,user',
+            'departemen' => 'nullable|string|max:255',
+        ]);
+
+        $user = User::create([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'kata_sandi' => Hash::make($request->kata_sandi),
+            'peran' => $request->peran,
+        ]);
+
+        UserProfile::create([
+            'pengguna_id' => $user->id,
+            'departemen' => $request->departemen,
+        ]);
+
+        return back()->with('sukses', 'Pengguna berhasil ditambahkan.');
+    }
+
+    public function penggunaUpdate(Request $request, $id)
+    {
+        $pengguna = User::findOrFail($id);
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pengguna,email,'.$pengguna->id,
+            'peran' => 'required|in:admin,user',
+            'departemen' => 'nullable|string|max:255',
+        ]);
+
+        $pengguna->update([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'peran' => $request->peran,
+        ]);
+
+        if ($request->filled('kata_sandi')) {
+            $pengguna->update(['kata_sandi' => Hash::make($request->kata_sandi)]);
+        }
+
+        UserProfile::updateOrCreate(
+            ['pengguna_id' => $pengguna->id],
+            ['departemen' => $request->departemen]
+        );
+
+        return back()->with('sukses', 'Pengguna berhasil diperbarui.');
     }
 
     public function penggunaHapus($id)
@@ -111,6 +160,32 @@ class AdminController extends Controller
         return back()->with('sukses', 'Pelabuhan berhasil ditambahkan.');
     }
 
+    public function pelabuhanUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama'       => 'required|string|max:200',
+            'lintang'    => 'required|numeric',
+            'bujur'      => 'required|numeric',
+            'negara_id'  => 'required|exists:negara,id',
+        ]);
+
+        $pelabuhan = Port::findOrFail($id);
+        $negara = Country::findOrFail($request->negara_id);
+
+        $pelabuhan->update([
+            'nama'          => $request->nama,
+            'kode_pelabuhan'=> $request->kode_pelabuhan,
+            'lintang'       => $request->lintang,
+            'bujur'         => $request->bujur,
+            'negara_id'     => $negara->id,
+            'kode_negara'   => $negara->kode_iso2,
+            'wilayah'       => $request->wilayah ?? $negara->wilayah,
+            'nomor_wpi'     => $request->nomor_wpi,
+        ]);
+
+        return back()->with('sukses', 'Pelabuhan berhasil diperbarui.');
+    }
+
     public function pelabuhanHapus($id)
     {
         Port::findOrFail($id)->delete();
@@ -135,14 +210,18 @@ class AdminController extends Controller
     public function artikelSimpan(Request $request)
     {
         $request->validate([
-            'judul'    => 'required|string|max:255',
-            'ringkasan'=> 'required|string',
-            'konten'   => 'required|string',
-            'status'   => 'required|in:Draft,Published',
+            'judul'      => 'required|string|max:255',
+            'kategori'   => 'nullable|string|max:100',
+            'gambar_url' => 'nullable|url',
+            'ringkasan'  => 'required|string',
+            'konten'     => 'required|string',
+            'status'     => 'required|in:Draft,Published',
         ]);
 
         Article::create([
             'judul'           => $request->judul,
+            'kategori'        => $request->kategori,
+            'gambar_url'      => $request->gambar_url,
             'ringkasan'       => $request->ringkasan,
             'konten'          => $request->konten,
             'penulis_id'      => auth()->id(),
@@ -151,6 +230,44 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.artikel.daftar')->with('sukses', 'Artikel berhasil disimpan.');
+    }
+
+    public function artikelEdit($id)
+    {
+        $artikel = Article::findOrFail($id);
+        return view('admin.artikel.edit', compact('artikel'));
+    }
+
+    public function artikelUpdate(Request $request, $id)
+    {
+        $artikel = Article::findOrFail($id);
+        $request->validate([
+            'judul'      => 'required|string|max:255',
+            'kategori'   => 'nullable|string|max:100',
+            'gambar_url' => 'nullable|url',
+            'ringkasan'  => 'required|string',
+            'konten'     => 'required|string',
+            'status'     => 'required|in:Draft,Published',
+        ]);
+
+        $diterbitkan_pada = $artikel->diterbitkan_pada;
+        if ($request->status === 'Published' && !$diterbitkan_pada) {
+            $diterbitkan_pada = Carbon::now();
+        } elseif ($request->status === 'Draft') {
+            $diterbitkan_pada = null;
+        }
+
+        $artikel->update([
+            'judul'           => $request->judul,
+            'kategori'        => $request->kategori,
+            'gambar_url'      => $request->gambar_url,
+            'ringkasan'       => $request->ringkasan,
+            'konten'          => $request->konten,
+            'status'          => $request->status,
+            'diterbitkan_pada'=> $diterbitkan_pada,
+        ]);
+
+        return redirect()->route('admin.artikel.daftar')->with('sukses', 'Artikel berhasil diperbarui.');
     }
 
     public function artikelHapus($id)

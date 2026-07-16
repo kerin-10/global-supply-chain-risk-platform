@@ -360,9 +360,20 @@
 
         @if(auth()->user()->isAdmin())
         <div class="nav-section-label">Administrasi</div>
-        <a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
-            <span class="nav-icon"><i class="fas fa-shield-alt"></i></span> Panel Admin
-            <span class="badge bg-danger rounded-pill">Admin</span>
+        <a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.index') || request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-shield-alt"></i></span> Dashboard Admin
+        </a>
+        <a href="{{ route('admin.pengguna.daftar') }}" class="{{ request()->routeIs('admin.pengguna.*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-users-cog"></i></span> Kelola Pengguna
+        </a>
+        <a href="{{ route('admin.pelabuhan.daftar') }}" class="{{ request()->routeIs('admin.pelabuhan.*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-anchor"></i></span> Kelola Pelabuhan
+        </a>
+        <a href="{{ route('admin.artikel.daftar') }}" class="{{ request()->routeIs('admin.artikel.*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-edit"></i></span> Kelola Artikel
+        </a>
+        <a href="{{ route('admin.leksikon.daftar') }}" class="{{ request()->routeIs('admin.leksikon.*') ? 'active' : '' }}">
+            <span class="nav-icon"><i class="fas fa-spell-check"></i></span> Leksikon Sentimen
         </a>
         @endif
     </div>

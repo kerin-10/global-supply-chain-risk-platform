@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Leksikon Sentimen')
-@section('page-title', '<i class="fas fa-spell-check me-2" style="color:var(--accent-yellow);"></i>Leksikon Sentimen')
+@section('page-title')
+    <i class="fas fa-spell-check me-2" style="color:var(--accent-yellow);"></i> Leksikon Sentimen
+@endsection
 
 @section('content')
 <div class="row g-3 mb-3 text-end">

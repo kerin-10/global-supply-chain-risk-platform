@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\ExternalApiService;
 use App\Models\Country;
+use Illuminate\Support\Facades\Http;
 
 class SyncCountriesCommand extends Command
 {

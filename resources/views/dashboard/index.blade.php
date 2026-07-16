@@ -17,13 +17,6 @@
 @endpush
 
 @section('content')
-<div class="d-flex justify-content-end mb-3">
-    <button id="btnSyncAll" class="btn btn-primary-glow">
-        <i class="fas fa-sync-alt me-2"></i>
-        Sinkronisasi Semua Data
-    </button>
-</div>
-
 <!-- STATS ROW -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl-2">
