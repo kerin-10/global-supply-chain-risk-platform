@@ -4,6 +4,7 @@
 <i class="fas fa-tachometer-alt me-2" style="color:#3b82f6;"></i> Dashboard Utama
 @endsection
 
+
 @push('styles')
 <style>
 .country-row { cursor:pointer; transition:background 0.2s; }
@@ -16,6 +17,13 @@
 @endpush
 
 @section('content')
+<div class="d-flex justify-content-end mb-3">
+    <button id="btnSyncAll" class="btn btn-primary-glow">
+        <i class="fas fa-sync-alt me-2"></i>
+        Sinkronisasi Semua Data
+    </button>
+</div>
+
 <!-- STATS ROW -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl-2">
@@ -123,7 +131,10 @@
                                     {{ $negara->kode_iso2 }}
                                 </div>
                                 <div>
-                                    <div style="font-weight:600;font-size:0.85rem;">{{ $negara->nama }}</div>
+                                   <a href="{{ route('dashboard.country.detail',$negara->id) }}"
+                                        style="font-weight:600;font-size:0.85rem;color:#60A5FA;;text-decoration:none;">
+                                        {{ $negara->nama }}
+                                    </a>
                                     <div style="font-size:0.68rem;color:#64748b;">{{ $negara->ibu_kota }}</div>
                                 </div>
                             </div>
@@ -208,16 +219,16 @@
         <div class="glass-card">
             <h6 class="fw-700 mb-3"><i class="fas fa-bolt me-2" style="color:#f59e0b;"></i>Akses Cepat</h6>
             <div class="d-grid gap-2">
-                <a href="{{ route('dashboard.weather') }}" class="btn-primary-glow btn text-start py-2 px-3" style="background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,182,212,0.2));border:1px solid rgba(59,130,246,0.3);color:#f1f5f9;border-radius:10px;font-size:0.83rem;">
+                <a href="{{ route('dashboard.weather') }}" class="btn-primary-glow btn text-start py-2 px-3" style="background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(6,182,212,.2));border:1px solid rgba(59,130,246,.3);color:#0F172A;font-weight:600;border-radius:10px;font-size:.83rem;">
                     <i class="fas fa-cloud-sun-rain me-2" style="color:#06b6d4;"></i>Peta Cuaca Global
                 </a>
-                <a href="{{ route('dashboard.ports') }}" class="btn text-start py-2 px-3" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);color:#f1f5f9;border-radius:10px;font-size:0.83rem;">
+                <a href="{{ route('dashboard.ports') }}" class="btn text-start py-2 px-3" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);color:#fffff;border-radius:10px;font-size:0.83rem;">
                     <i class="fas fa-anchor me-2" style="color:#8b5cf6;"></i>Dashboard Pelabuhan
                 </a>
-                <a href="{{ route('dashboard.compare') }}" class="btn text-start py-2 px-3" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f1f5f9;border-radius:10px;font-size:0.83rem;">
+                <a href="{{ route('dashboard.compare') }}" class="btn text-start py-2 px-3" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#fffff;border-radius:10px;font-size:0.83rem;">
                     <i class="fas fa-balance-scale me-2" style="color:#f59e0b;"></i>Bandingkan Negara
                 </a>
-                <a href="{{ route('dashboard.news') }}" class="btn text-start py-2 px-3" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#f1f5f9;border-radius:10px;font-size:0.83rem;">
+                <a href="{{ route('dashboard.news') }}" class="btn text-start py-2 px-3" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#fffff;border-radius:10px;font-size:0.83rem;">
                     <i class="fas fa-newspaper me-2" style="color:#10b981;"></i>Berita & Sentimen
                 </a>
             </div>
@@ -254,5 +265,47 @@ async function sinkronisasiNegara(kode, btn) {
         alert('Sinkronisasi gagal: ' + (e.response?.data?.pesan || e.message));
     }
 }
+
+document.getElementById('btnSyncAll').addEventListener('click', async function () {
+
+    if (!confirm('Sinkronisasi seluruh data negara? Proses ini bisa memakan beberapa menit.')) {
+        return;
+    }
+
+    const btn = this;
+
+    btn.disabled = true;
+
+    btn.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Sedang Sinkronisasi...
+    `;
+
+    try {
+
+        const res = await axios.post('/api/v1/countries/sync-all');
+
+        alert(res.data.message ?? 'Sinkronisasi berhasil');
+
+        location.reload();
+
+    } catch (e) {
+
+        alert('Sinkronisasi gagal');
+
+        console.error(e);
+
+    } finally {
+
+        btn.disabled = false;
+
+        btn.innerHTML = `
+            <i class="fas fa-sync-alt me-2"></i>
+            Sinkronisasi Semua Data
+        `;
+
+    }
+
+});
 </script>
 @endpush

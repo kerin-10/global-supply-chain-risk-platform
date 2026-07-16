@@ -15,23 +15,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Leaflet.js CSS -->
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    <!-- Tom Select Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
 
     <style>
-        :root {
-            --bg-dark:        #0a0e1a;
-            --bg-card:        rgba(16, 22, 40, 0.85);
-            --bg-sidebar:     rgba(10, 14, 30, 0.97);
-            --accent-blue:    #3b82f6;
-            --accent-cyan:    #06b6d4;
-            --accent-green:   #10b981;
-            --accent-yellow:  #f59e0b;
-            --accent-red:     #ef4444;
-            --accent-purple:  #8b5cf6;
-            --border-glass:   rgba(59, 130, 246, 0.15);
-            --text-primary:   #f1f5f9;
-            --text-muted:     #94a3b8;
-            --glow-blue:      0 0 20px rgba(59, 130, 246, 0.3);
-            --sidebar-width:  260px;
+        :root{
+            --bg-dark:#F8FAFC;
+            --bg-card:#FFFFFF;
+            --bg-sidebar:#FFFFFF;
+
+            --accent-blue:#2563EB;
+            --accent-cyan:#0EA5E9;
+            --accent-green:#22C55E;
+            --accent-yellow:#F59E0B;
+            --accent-red:#EF4444;
+            --accent-purple:#7C3AED;
+
+            --border-glass:#E2E8F0;
+
+            --text-primary:#0F172A;
+            --text-muted:#475569;
+
+            --glow-blue:0 4px 20px rgba(37,99,235,.08);
+
+            --sidebar-width:260px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -45,9 +52,8 @@
             content: '';
             position: fixed; inset: 0; z-index: -1;
             background:
-                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 55%),
-                radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.07) 0%, transparent 55%),
-                radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%);
+                radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.04) 0%, transparent 55%);
         }
 
         /* SIDEBAR */
@@ -76,14 +82,14 @@
             border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem; color: white;
-            box-shadow: var(--glow-blue);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
         .brand-text { line-height: 1.2; }
-        .brand-name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
-        .brand-sub  { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; }
+        .brand-name { font-size: 0.95rem; font-weight: 800; color: var(--text-primary); }
+        .brand-sub  { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
 
         .nav-section-label {
-            font-size: 0.6rem; font-weight: 600; letter-spacing: 1.5px;
+            font-size: 0.6rem; font-weight: 700; letter-spacing: 1.5px;
             text-transform: uppercase; color: var(--text-muted);
             padding: 1rem 1.25rem 0.4rem;
         }
@@ -91,13 +97,13 @@
             display: flex; align-items: center; gap: 10px;
             padding: 0.65rem 1.25rem;
             color: var(--text-muted);
-            text-decoration: none; font-size: 0.85rem; font-weight: 500;
+            text-decoration: none; font-size: 0.85rem; font-weight: 600;
             border-left: 3px solid transparent;
             transition: all 0.2s ease;
         }
         .sidebar-nav a:hover, .sidebar-nav a.active {
-            color: var(--text-primary);
-            background: rgba(59,130,246,0.08);
+            color: var(--accent-blue);
+            background: rgba(37, 99, 235, 0.06);
             border-left-color: var(--accent-blue);
         }
         .sidebar-nav a .nav-icon { width: 18px; text-align: center; font-size: 0.85rem; }
@@ -118,8 +124,8 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 0.8rem; color: white; flex-shrink: 0;
         }
-        .user-name  { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
-        .user-role  { font-size: 0.68rem; color: var(--text-muted); }
+        .user-name  { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); }
+        .user-role  { font-size: 0.68rem; color: var(--text-muted); font-weight: 500; }
 
         /* MAIN CONTENT */
         .main-content {
@@ -131,24 +137,25 @@
         /* TOP BAR */
         .topbar {
             padding: 1rem 1.75rem;
-            background: rgba(10,14,26,0.8);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-glass);
             display: flex; align-items: center; justify-content: space-between;
             position: sticky; top: 0; z-index: 900;
         }
-        .topbar-title { font-size: 1.1rem; font-weight: 700; }
+        .topbar-title { font-size: 1.1rem; font-weight: 800; color: var(--text-primary); }
         .topbar-actions { display: flex; align-items: center; gap: 12px; }
         .topbar-btn {
-            background: rgba(59,130,246,0.1);
+            background: rgba(37, 99, 235, 0.08);
             border: 1px solid var(--border-glass);
             color: var(--text-muted);
             padding: 0.45rem 0.85rem;
             border-radius: 8px; font-size: 0.8rem;
             cursor: pointer; transition: all 0.2s;
             text-decoration: none;
+            font-weight: 600;
         }
-        .topbar-btn:hover { color: var(--text-primary); background: rgba(59,130,246,0.2); }
+        .topbar-btn:hover { color: var(--accent-blue); background: rgba(37, 99, 235, 0.15); }
 
         /* CONTENT AREA */
         .content-area { padding: 1.75rem; flex: 1; }
@@ -158,11 +165,11 @@
             background: var(--bg-card);
             border: 1px solid var(--border-glass);
             border-radius: 16px;
-            backdrop-filter: blur(12px);
             padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .glass-card:hover { transform: translateY(-2px); box-shadow: var(--glow-blue); }
+        .glass-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08); }
 
         /* STAT CARDS */
         .stat-card {
@@ -170,31 +177,32 @@
             border: 1px solid var(--border-glass);
             border-radius: 14px; padding: 1.25rem;
             display: flex; align-items: center; gap: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             transition: all 0.25s;
         }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.06); }
         .stat-icon {
             width: 50px; height: 50px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem; flex-shrink: 0;
         }
         .stat-val   { font-size: 1.6rem; font-weight: 800; line-height: 1; }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
 
         /* RISK BADGES */
-        .badge-rendah  { background: rgba(16,185,129,0.15); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.3); }
-        .badge-sedang  { background: rgba(245,158,11,0.15); color: var(--accent-yellow); border: 1px solid rgba(245,158,11,0.3); }
-        .badge-tinggi  { background: rgba(239,68,68,0.15);  color: var(--accent-red);    border: 1px solid rgba(239,68,68,0.3); }
+        .badge-rendah  { background: rgba(22,163,74,0.12); color: var(--accent-green); border: 1px solid rgba(22,163,74,0.25); font-weight: 700; }
+        .badge-sedang  { background: rgba(202,138,4,0.12); color: var(--accent-yellow); border: 1px solid rgba(202,138,4,0.25); font-weight: 700; }
+        .badge-tinggi  { background: rgba(220,38,38,0.12);  color: var(--accent-red);    border: 1px solid rgba(220,38,38,0.25); font-weight: 700; }
 
         /* ALERTS */
         .alert-glass {
-            background: rgba(16,22,40,0.7);
+            background: #ffffff;
             border: 1px solid var(--border-glass);
             border-radius: 10px; color: var(--text-primary);
-            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        .alert-glass.alert-success { border-color: rgba(16,185,129,0.4); }
-        .alert-glass.alert-danger  { border-color: rgba(239,68,68,0.4); }
+        .alert-glass.alert-success { border-color: rgba(22,163,74,0.4); }
+        .alert-glass.alert-danger  { border-color: rgba(220,38,38,0.4); }
 
         /* TABLE */
         .table-glass {
@@ -202,34 +210,35 @@
             border-collapse: separate; border-spacing: 0;
         }
         .table-glass thead th {
-            background: rgba(59,130,246,0.08);
+            background: rgba(37,99,235,0.04);
             border-bottom: 1px solid var(--border-glass);
             color: var(--text-muted); font-size: 0.73rem;
             text-transform: uppercase; letter-spacing: 0.8px;
             padding: 0.75rem 1rem;
+            font-weight: 700;
         }
         .table-glass tbody td {
             padding: 0.75rem 1rem;
-            border-bottom: 1px solid rgba(59,130,246,0.06);
+            border-bottom: 1px solid rgba(37,99,235,0.06);
             vertical-align: middle; font-size: 0.85rem;
         }
-        .table-glass tbody tr:hover td { background: rgba(59,130,246,0.04); }
+        .table-glass tbody tr:hover td { background: rgba(37,99,235,0.02); }
 
         /* BUTTONS */
         .btn-primary-glow {
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-            border: none; color: white; font-weight: 600;
+            border: none; color: white; font-weight: 700;
             border-radius: 10px; padding: 0.55rem 1.2rem;
-            transition: all 0.25s; box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+            transition: all 0.25s; box-shadow: 0 4px 12px rgba(37,99,235,0.2);
         }
-        .btn-primary-glow:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.45); color: white; }
+        .btn-primary-glow:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,0.35); color: white; }
 
         /* RISK METER */
-        .risk-meter { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .risk-meter { height: 8px; border-radius: 4px; background: rgba(0,0,0,0.06); overflow: hidden; }
         .risk-meter-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
-        .fill-rendah { background: linear-gradient(90deg, #10b981, #34d399); }
-        .fill-sedang { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-        .fill-tinggi { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .fill-rendah { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .fill-sedang { background: linear-gradient(90deg, #ca8a04, #fde047); }
+        .fill-tinggi { background: linear-gradient(90deg, #dc2626, #f87171); }
 
         /* MOBILE */
         @media (max-width: 768px) {
@@ -241,7 +250,61 @@
         /* Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(37, 99, 235, 0.2); border-radius: 3px; }
+
+        /* Tom Select Light Theme Override */
+        .ts-wrapper .ts-control {
+            background: #ffffff !important;
+            border: 1px solid var(--border-glass) !important;
+            color: var(--text-primary) !important;
+            border-radius: 8px !important;
+            padding: 0.45rem 0.75rem !important;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05) !important;
+        }
+        .ts-dropdown {
+            background: #ffffff !important;
+            border: 1px solid var(--border-glass) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+            border-radius: 8px !important;
+        }
+        .ts-dropdown .active {
+            background: rgba(37, 99, 235, 0.12) !important;
+            color: var(--accent-blue) !important;
+            font-weight: 600;
+        }
+        .ts-dropdown .option {
+            color: var(--text-primary) !important;
+            padding: 0.45rem 0.75rem !important;
+        }
+        .ts-dropdown .option:hover {
+            background: rgba(37, 99, 235, 0.05) !important;
+        }
+        .ts-wrapper.single .ts-control {
+            background-image: none !important;
+        }
+        .ts-wrapper.single .ts-control::after {
+            border-color: var(--text-muted) transparent transparent transparent !important;
+            right: 15px !important;
+        }
+        .ts-wrapper.single.input-active .ts-control::after {
+            border-color: transparent transparent var(--text-muted) transparent !important;
+        }
+        .ts-control input {
+            color: var(--text-primary) !important;
+        }
+        .ts-wrapper.multi .ts-control > div {
+            background: rgba(37, 99, 235, 0.1) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-glass) !important;
+            border-radius: 4px !important;
+        }
+        .ts-wrapper .ts-control, .ts-wrapper .ts-control input {
+            font-size: 0.85rem !important;
+        }
+        .ts-wrapper.form-select-sm .ts-control {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.8rem !important;
+        }
     </style>
     @stack('styles')
 </head>
@@ -394,6 +457,8 @@
     // Setup Axios CSRF token
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
 </script>
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 @stack('scripts')
 </body>
 </html>

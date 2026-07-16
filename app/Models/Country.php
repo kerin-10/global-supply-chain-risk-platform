@@ -28,6 +28,15 @@ class Country extends Model
         'cuaca_curah_hujan',
         'cuaca_kecepatan_angin',
         'cuaca_risiko_badai',
+        'cuaca_kelembaban',
+        'cuaca_suhu_terasa',
+        'cuaca_tekanan_udara',
+        'cuaca_jarak_pandang',
+        'cuaca_tutupan_awan',
+        'cuaca_kode_cuaca',
+        'cuaca_deskripsi',
+        'bendera_url',
+        'luas_wilayah',
         'sinkronisasi_terakhir_pada'
     ];
 
@@ -43,6 +52,15 @@ class Country extends Model
         'cuaca_curah_hujan' => 'double',
         'cuaca_kecepatan_angin' => 'double',
         'cuaca_risiko_badai' => 'double',
+        'cuaca_kelembaban' => 'double',
+        'cuaca_suhu_terasa' => 'double',
+        'cuaca_tekanan_udara' => 'double',
+        'cuaca_jarak_pandang' => 'double',
+        'cuaca_tutupan_awan' => 'double',
+        'cuaca_kode_cuaca' => 'integer',
+        'cuaca_deskripsi' => 'string',
+        'bendera_url' => 'string',
+        'luas_wilayah' => 'double',
         'sinkronisasi_terakhir_pada' => 'datetime',
     ];
 

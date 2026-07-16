@@ -81,8 +81,8 @@ class DashboardController extends Controller
     {
         $negaraList = Country::orderBy('nama')->get();
         $beritaTerbaru = NewsCache::with('country')
-            ->orderBy('diterbitkan_pada', 'desc')
-            ->take(20)->get();
+        ->orderBy('diterbitkan_pada', 'desc')
+        ->paginate(20);
 
         return view('dashboard.news', compact('negaraList', 'beritaTerbaru'));
     }
@@ -105,6 +105,8 @@ class DashboardController extends Controller
         'economicHistories',
         'currentRiskScore'
     ])->orderBy('nama')->get();
+
+
 
     $firstCountry = $negaraList->first();
 
@@ -201,4 +203,15 @@ class DashboardController extends Controller
 
         return view('articles.show', compact('artikel', 'artikelLainnya'));
     }
+    public function countryDetail($id)
+{
+    $negara = Country::with([
+        'currentRiskScore',
+        'economicHistories',
+        'ports',
+        'newsCaches'
+    ])->findOrFail($id);
+
+    return view('dashboard.country-detail', compact('negara'));
+}
 }

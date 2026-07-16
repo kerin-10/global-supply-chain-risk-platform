@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
-
+use App\Http\Controllers\CountryApiController;
 // ==========================================
 //  RUTE AUTENTIKASI
 // ==========================================
@@ -15,6 +15,7 @@ Route::post('/login',   [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register',[AuthController::class, 'register'])->name('register.post');
 Route::post('/logout',  [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::post('/api/v1/countries/sync-all', [CountryApiController::class, 'syncAllCountries']);
 
 // ==========================================
 //  RUTE DASHBOARD (Login Wajib)
@@ -29,7 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/visualisasi',   [DashboardController::class, 'visualization'])->name('dashboard.visualization');
     Route::get('/dashboard/daftar-pantau', [DashboardController::class, 'watchlist'])->name('dashboard.watchlist');
     Route::post('/dashboard/daftar-pantau/toggle', [DashboardController::class, 'toggleWatchlist'])->name('dashboard.watchlist.toggle');
-
+    Route::get('/dashboard/negara/{id}',   [DashboardController::class, 'countryDetail'])->name('dashboard.country.detail');
+    
     // Artikel Analisis
     Route::get('/artikel',      [DashboardController::class, 'articles'])->name('articles.index');
     Route::get('/artikel/{id}', [DashboardController::class, 'articleDetail'])->name('articles.show');
@@ -66,4 +68,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Pengaturan Sistem
     Route::post('/pengaturan',                     [AdminController::class, 'pengaturanSimpan'])->name('pengaturan.simpan');
+    
 });

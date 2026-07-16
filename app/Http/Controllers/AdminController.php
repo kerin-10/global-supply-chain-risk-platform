@@ -41,7 +41,11 @@ class AdminController extends Controller
         $logTerbaru = ApiRequestLog::orderBy('diminta_pada', 'desc')->take(10)->get();
         $pengaturan = SystemSetting::all();
 
-        return view('admin.index', compact('stats', 'logTerbaru', 'pengaturan'));
+        // Validasi koneksi API eksternal
+        $apiService = app(\App\Services\ExternalApiService::class);
+        $statusKoneksi = $apiService->periksaKoneksiApi();
+
+        return view('admin.index', compact('stats', 'logTerbaru', 'pengaturan', 'statusKoneksi'));
     }
 
     // =============================================

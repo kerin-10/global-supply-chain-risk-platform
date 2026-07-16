@@ -51,32 +51,37 @@ class ExternalApiService
     /**
      * Mengambil data cuaca real-time dari Open-Meteo.
      */
-    public function ambilCuaca(double $lintang, double $bujur): array
+    public function ambilCuaca(float $lintang, float $bujur): array
     {
         $url = "https://api.open-meteo.com/v1/forecast";
         $data = $this->kirimPermintaan('Open-Meteo', $url, 'GET', [
             'query' => [
                 'latitude' => $lintang,
                 'longitude' => $bujur,
-                'current_weather' => 'true',
-                'hourly' => 'precipitation_probability,precipitation'
+                'current' => 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,visibility'
             ]
         ]);
 
-        if (!$data || !isset($data['current_weather'])) {
+        if (!$data || !isset($data['current'])) {
             return [
                 'suhu' => null,
                 'kecepatan_angin' => null,
                 'curah_hujan' => 0.0,
-                'risiko_badai' => 0.0
+                'risiko_badai' => 0.0,
+                'kelembaban' => null,
+                'suhu_terasa' => null,
+                'tekanan_udara' => null,
+                'jarak_pandang' => null,
+                'tutupan_awan' => null,
+                'kode_cuaca' => null,
+                'deskripsi' => 'N/A'
             ];
         }
 
-        $current = $data['current_weather'];
-        $weatherCode = $current['weathercode'] ?? 0;
+        $current = $data['current'];
+        $weatherCode = $current['weather_code'] ?? 0;
         
-        // Klasifikasikan risiko badai berdasarkan weathercode
-        // Weathercode >= 95 menunjukkan thunderstorm/badai di Open-Meteo
+        // Klasifikasikan risiko badai berdasarkan weather_code
         $risikoBadai = 10.0; // Baseline default
         if (in_array($weatherCode, [95, 96, 99])) {
             $risikoBadai = 90.0;
@@ -86,18 +91,58 @@ class ExternalApiService
             $risikoBadai = 40.0;
         }
 
-        // Cari curah hujan saat ini dari hourly jika ada
-        $curahHujan = 0.0;
-        if (isset($data['hourly']['precipitation'])) {
-            $curahHujan = collect($data['hourly']['precipitation'])->first() ?? 0.0;
-        }
-
         return [
-            'suhu' => $current['temperature'] ?? null,
-            'kecepatan_angin' => $current['windspeed'] ?? null,
-            'curah_hujan' => (double)$curahHujan,
-            'risiko_badai' => (double)$risikoBadai
+            'suhu' => $current['temperature_2m'] ?? null,
+            'kecepatan_angin' => $current['wind_speed_10m'] ?? null,
+            'curah_hujan' => (double)($current['precipitation'] ?? 0.0),
+            'risiko_badai' => (double)$risikoBadai,
+            'kelembaban' => isset($current['relative_humidity_2m']) ? (double)$current['relative_humidity_2m'] : null,
+            'suhu_terasa' => isset($current['apparent_temperature']) ? (double)$current['apparent_temperature'] : null,
+            'tekanan_udara' => isset($current['pressure_msl']) ? (double)$current['pressure_msl'] : null,
+            'jarak_pandang' => isset($current['visibility']) ? (double)($current['visibility'] / 1000) : null, // in km
+            'tutupan_awan' => isset($current['cloud_cover']) ? (double)$current['cloud_cover'] : null,
+            'kode_cuaca' => $weatherCode,
+            'deskripsi' => self::deskripsiWeatherCode($weatherCode)
         ];
+    }
+
+    /**
+     * Menerjemahkan weather_code ke deskripsi Bahasa Indonesia.
+     */
+    public static function deskripsiWeatherCode(int $code): string
+    {
+        $codes = [
+            0 => 'Cerah',
+            1 => 'Cerah Berawan',
+            2 => 'Berawan sebagian',
+            3 => 'Berawan Tebal',
+            45 => 'Kabut',
+            48 => 'Kabut Rime Mendidih',
+            51 => 'Gerimis Ringan',
+            53 => 'Gerimis Sedang',
+            55 => 'Gerimis Lebat',
+            56 => 'Gerimis Membeku Ringan',
+            57 => 'Gerimis Membeku Lebat',
+            61 => 'Hujan Ringan',
+            63 => 'Hujan Sedang',
+            65 => 'Hujan Lebat',
+            66 => 'Hujan Beku Ringan',
+            67 => 'Hujan Beku Lebat',
+            71 => 'Hujan Salju Ringan',
+            73 => 'Hujan Salju Sedang',
+            75 => 'Hujan Salju Lebat',
+            77 => 'Butiran Salju',
+            80 => 'Hujan Rintik Ringan',
+            81 => 'Hujan Rintik Sedang',
+            82 => 'Hujan Rintik Lebat',
+            85 => 'Hujan Salju Ringan',
+            86 => 'Hujan Salju Lebat',
+            95 => 'Badai Petir',
+            96 => 'Badai Petir Ringan',
+            99 => 'Badai Petir Lebat dengan Hujan Es',
+        ];
+
+        return $codes[$code] ?? 'Kondisi Cuaca Tidak Diketahui';
     }
 
     /**
@@ -118,14 +163,18 @@ class ExternalApiService
         foreach ($indicators as $key => $indCode) {
             $url = "https://api.worldbank.org/v2/country/{$kodeNegara3}/indicator/{$indCode}";
             $data = $this->kirimPermintaan("WorldBank-{$key}", $url, 'GET', [
-                'query' => ['format' => 'json', 'mrnev' => 5] // Ambil 5 record terakhir yang valid
-            ]);
+               'query' => [
+                    'format' => 'json',
+                    'per_page' => 100
+                ] ]);
+            // Hilangkan print debug dd($data) agar tidak error
+           
 
             if ($data && count($data) > 1 && is_array($data[1])) {
                 $hasil[$key] = collect($data[1])->map(function ($item) {
                     return [
                         'tahun' => (int)$item['date'],
-                        'nilai' => $item['value'] !== null ? (double)$item['value'] : 0.0
+                        'nilai' => $item['value'] !== null ? (float)$item['value'] : 0.0
                     ];
                 })->filter(fn($item) => $item['nilai'] > 0)->values()->toArray();
             } else {
@@ -141,30 +190,32 @@ class ExternalApiService
      */
     public function ambilNegaraRestCountries(string $kodeNegara2): ?array
     {
-        $url = "https://restcountries.com/v3.1/alpha/{$kodeNegara2}";
-        $data = $this->kirimPermintaan('REST-Countries', $url);
+        $url = "https://countries.dev/alpha/{$kodeNegara2}";
+        $raw = $this->kirimPermintaan('REST-Countries', $url);
 
-        if (!$data || !is_array($data) || count($data) === 0) {
+        if (!$raw || !is_array($raw)) {
             return null;
         }
 
-        $raw = $data[0];
-        
-        // Parse mata uang
+        // Parse mata uang dari array currencies
         $currencyCode = null;
         $currencyName = null;
-        if (isset($raw['currencies'])) {
-            $firstCurrKey = array_key_first($raw['currencies']);
-            if ($firstCurrKey) {
-                $currencyCode = $firstCurrKey;
-                $currencyName = $raw['currencies'][$firstCurrKey]['name'] ?? null;
-            }
+        if (isset($raw['currencies']) && is_array($raw['currencies']) && count($raw['currencies']) > 0) {
+            $first = $raw['currencies'][0];
+            $currencyCode = $first['code'] ?? null;
+            $currencyName = $first['name'] ?? null;
         }
 
-        // Parse bahasa
+        // Parse bahasa dari array languages
         $languages = null;
-        if (isset($raw['languages'])) {
-            $languages = implode(', ', array_values($raw['languages']));
+        if (isset($raw['languages']) && is_array($raw['languages'])) {
+            $langNames = [];
+            foreach ($raw['languages'] as $lang) {
+                if (isset($lang['name'])) {
+                    $langNames[] = $lang['name'];
+                }
+            }
+            $languages = implode(', ', $langNames);
         }
 
         // Parse koordinat (lat/lng)
@@ -175,16 +226,24 @@ class ExternalApiService
             $lng = $raw['latlng'][1];
         }
 
+        // Parse bendera, populasi, luas wilayah
+        $flags = $raw['flags']['png'] ?? ($raw['flags']['svg'] ?? null);
+        $populasi = $raw['population'] ?? null;
+        $luasWilayah = $raw['area'] ?? null;
+
         return [
-            'nama' => $raw['name']['common'] ?? '',
-            'kode_iso3' => $raw['cca3'] ?? null,
+            'nama' => $raw['name'] ?? '',
+            'kode_iso3' => $raw['alpha3Code'] ?? null,
             'wilayah' => $raw['region'] ?? null,
-            'ibu_kota' => $raw['capital'][0] ?? null,
+            'ibu_kota' => $raw['capital'] ?? null,
             'kode_mata_uang' => $currencyCode,
             'nama_mata_uang' => $currencyName,
             'bahasa' => $languages,
             'lintang' => $lat,
             'bujur' => $lng,
+            'bendera_url' => $flags,
+            'populasi' => $populasi,
+            'luas_wilayah' => $luasWilayah,
         ];
     }
 
@@ -210,112 +269,221 @@ class ExternalApiService
      * Mengambil berita global logistik/ekonomi. Mendukung GNews API (dengan token) & fallback RSS.
      */
     public function ambilBeritaGlobal(string $keyword = 'shipping logistics trade economy', ?string $gnewsToken = null): array
-    {
-        // Jika ada GNews API Key, gunakan GNews
-        if (!empty($gnewsToken)) {
-            $url = "https://gnews.io/api/v4/search";
-            $data = $this->kirimPermintaan('GNews-API', $url, 'GET', [
-                'query' => [
-                    'q' => $keyword,
-                    'token' => $gnewsToken,
-                    'lang' => 'en',
-                    'max' => 10
-                ]
-            ]);
+{
+    $berita = [];
 
-            if ($data && isset($data['articles'])) {
-                return collect($data['articles'])->map(function ($item) {
-                    return [
-                        'judul' => $item['title'] ?? '',
-                        'deskripsi' => $item['description'] ?? '',
-                        'konten' => $item['content'] ?? '',
-                        'tautan_url' => $item['url'] ?? '',
-                        'sumber' => $item['source']['name'] ?? 'GNews',
-                        'diterbitkan_pada' => Carbon::parse($item['publishedAt'] ?? now())
-                    ];
-                })->toArray();
-            }
-        }
-
-        // Fallback: Menggunakan RSS Feed Parser CNBC / Reuters (Bebas Biaya & Tanpa Key)
-        $rssUrl = "https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords=" . urlencode($keyword);
-        
-        $startTime = microtime(true);
-        $status = 500;
-        $berita = [];
+    // ===========================
+    // PRIORITAS 1 : GNEWS API
+    // ===========================
+    if (!empty($gnewsToken)) {
 
         try {
-            $response = Http::timeout(8)->get($rssUrl);
-            $status = $response->status();
-            
+
+            $response = Http::timeout(15)
+                ->acceptJson()
+                ->get('https://gnews.io/api/v4/search', [
+                    'q'      => $keyword,
+                    'lang'   => 'en',
+                    'max'    => 10,
+                    'token'  => $gnewsToken,
+                ]);
+
+            Log::info('GNews Status : '.$response->status());
+
             if ($response->successful()) {
-                $xml = simplexml_load_string($response->body());
-                if ($xml && isset($xml->channel->item)) {
-                    foreach ($xml->channel->item as $item) {
+
+                $json = $response->json();
+
+                if (!empty($json['articles'])) {
+
+                    foreach ($json['articles'] as $item) {
+
                         $berita[] = [
-                            'judul' => (string)$item->title,
-                            'deskripsi' => (string)$item->description,
-                            'konten' => (string)$item->description, // RSS biasanya menyimpan ringkasan di deskripsi
-                            'tautan_url' => (string)$item->link,
-                            'sumber' => 'CNBC News RSS',
-                            'diterbitkan_pada' => Carbon::parse((string)$item->pubDate)
+                            'judul' => $item['title'] ?? '',
+                            'deskripsi' => $item['description'] ?? '',
+                            'konten' => $item['content'] ?? '',
+                            'tautan_url' => $item['url'] ?? '',
+                            'sumber' => $item['source']['name'] ?? 'GNews',
+                            'diterbitkan_pada' => Carbon::parse($item['publishedAt']),
                         ];
 
-                        if (count($berita) >= 12) break; // Batasi maksimal 12 berita
                     }
+
+                    return $berita;
                 }
+
+                Log::warning('GNews tidak mengembalikan artikel', $json);
+
+            } else {
+
+                Log::error('GNews gagal', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+
             }
-        } catch (Exception $e) {
-            Log::error("Gagal melakukan parse RSS Feed berita: " . $e->getMessage());
-        } finally {
-            $durationMs = intval((microtime(true) - $startTime) * 1000);
-            ApiRequestLog::create([
-                'nama_api' => 'CNBC-RSS-Feed',
-                'endpoint' => $rssUrl,
-                'status_respons' => $status,
-                'waktu_respons_ms' => $durationMs,
-                'diminta_pada' => Carbon::now()
-            ]);
+
+        } catch (\Throwable $e) {
+
+            Log::error('Error GNews : '.$e->getMessage());
+
+        }
+    }
+
+    // ===========================
+    // PRIORITAS 2 : CNBC RSS
+    // ===========================
+
+    try {
+
+        $rss = Http::timeout(10)->get(
+            'https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords='
+            . urlencode($keyword)
+        );
+
+        if ($rss->successful()) {
+
+            $xml = simplexml_load_string($rss->body());
+
+            if ($xml && isset($xml->channel->item)) {
+
+                foreach ($xml->channel->item as $item) {
+
+                    $berita[] = [
+
+                        'judul' => (string)$item->title,
+
+                        'deskripsi' => strip_tags((string)$item->description),
+
+                        'konten' => strip_tags((string)$item->description),
+
+                        'tautan_url' => (string)$item->link,
+
+                        'sumber' => 'CNBC RSS',
+
+                        'diterbitkan_pada' => Carbon::parse((string)$item->pubDate),
+
+                    ];
+
+                    if(count($berita)>=10){
+                        break;
+                    }
+
+                }
+
+            }
+
         }
 
-        // Jika RSS kosong atau gagal, kembalikan berita mock sebagai fallback cadangan terakhir agar platform tidak eror
-        if (empty($berita)) {
-            $berita = [
-                [
-                    'judul' => 'Global Logistics Bottleneck Eases Amid Port Automation Upgrades',
-                    'deskripsi' => 'Automated port systems in Rotterdam and Singapore show signs of recovery, reducing turnaround time by 15% and boosting trade.',
-                    'konten' => 'Automated port systems in Rotterdam and Singapore show signs of recovery, reducing turnaround time by 15% and boosting trade.',
-                    'tautan_url' => 'https://example.com/logistics-automation',
-                    'sumber' => 'Global Logistics Review',
-                    'diterbitkan_pada' => Carbon::now()->subHours(2)
-                ],
-                [
-                    'judul' => 'Rising Inflation Triggers Global Currency Market Volatility',
-                    'deskripsi' => 'Inflation hikes in major economies prompt central bank rate increases, destabilizing regional currency exchange rates and shipping values.',
-                    'konten' => 'Inflation hikes in major economies prompt central bank rate increases, destabilizing regional currency exchange rates and shipping values.',
-                    'tautan_url' => 'https://example.com/inflation-market',
-                    'sumber' => 'Financial Trade Intelligence',
-                    'diterbitkan_pada' => Carbon::now()->subHours(5)
-                ],
-                [
-                    'judul' => 'Extreme Weather Threats Disrupt Major Canal Shipping Lines',
-                    'deskripsi' => 'Heavy rainfall and storms delay transit container vessels, increasing global supply chain risks and logistics costs.',
-                    'konten' => 'Heavy rainfall and storms delay transit container vessels, increasing global supply chain risks and logistics costs.',
-                    'tautan_url' => 'https://example.com/weather-shipping-disruption',
-                    'sumber' => 'Maritime Operations Daily',
-                    'diterbitkan_pada' => Carbon::now()->subHours(12)
-                ],
-                [
-                    'judul' => 'Trade Tariff Tensions Spark Geopolitical Risk and Shortages',
-                    'deskripsi' => 'Imposed sanctions and trade war disputes threaten international export flows, causing bottleneck delays and inflation increases.',
-                    'konten' => 'Imposed sanctions and trade war disputes threaten international export flows, causing bottleneck delays and inflation increases.',
-                    'tautan_url' => 'https://example.com/tariff-geopolitical-war',
-                    'sumber' => 'International Trade Monitor',
-                    'diterbitkan_pada' => Carbon::now()->subDays(1)
-                ]
-            ];
+    } catch (\Throwable $e) {
+
+        Log::error('RSS Error : '.$e->getMessage());
+
+    }
+
+    return $berita;
+}
+
+        
+
+    /**
+     * Mengambil daftar pelabuhan dari dataset Taylor Jordan GitHub (World Port Index).
+     */
+    public function ambilPelabuhanNegara(string $countryName): array
+    {
+        $allPorts = $this->ambilSemuaPelabuhan();
+        if (empty($allPorts)) {
+            return [];
         }
 
-        return $berita;
+        // Filter pelabuhan berdasarkan nama negara (case insensitive)
+        $countryLower = strtolower($countryName);
+        $filtered = array_filter($allPorts, function ($port) use ($countryLower) {
+            return isset($port['negara']) && strtolower($port['negara']) === $countryLower;
+        });
+
+        return array_values($filtered);
+    }
+
+    /**
+     * Mengambil SEMUA pelabuhan global dari dataset Taylor Jordan GitHub (World Port Index).
+     * Digunakan untuk sinkronisasi massal tanpa filter negara.
+     */
+    public function ambilSemuaPelabuhan(): array
+    {
+        return \Illuminate\Support\Facades\Cache::remember('global_ports_data', now()->addDays(7), function () {
+            $url = "https://raw.githubusercontent.com/tayljordan/ports/main/ports.json";
+
+            // Gunakan timeout lebih lama karena dataset besar (~3000+ pelabuhan)
+            $startTime = microtime(true);
+            $status = 500;
+
+            try {
+                $response = Http::timeout(30)->get($url);
+                $status = $response->status();
+
+                if (!$response->successful()) {
+                    return [];
+                }
+
+                $data = $response->json();
+
+                if (!$data || !isset($data['ports'])) {
+                    return [];
+                }
+
+                // Mapping seluruh pelabuhan ke struktur model kita
+                return array_map(function ($port) {
+                    return [
+                        'nama' => $port['wpi_port_name'] ?? $port['point_of_interest'] ?? 'Unnamed Port',
+                        'lintang' => (float)($port['latitude'] ?? 0.0),
+                        'bujur' => (float)($port['longitude'] ?? 0.0),
+                        'nomor_wpi' => isset($port['wpi_port_id']) ? 'WPI-' . str_pad($port['wpi_port_id'], 4, '0', STR_PAD_LEFT) : null,
+                        'negara' => $port['country'] ?? 'Unknown',
+                        'ukuran' => $port['port_size'] ?? 'Small',
+                    ];
+                }, $data['ports']);
+
+            } catch (Exception $e) {
+                Log::error("Gagal mengambil semua pelabuhan global: " . $e->getMessage());
+                return [];
+            } finally {
+                $durationMs = intval((microtime(true) - $startTime) * 1000);
+                ApiRequestLog::create([
+                    'nama_api' => 'TaylorJordan-Ports-API-Global',
+                    'endpoint' => $url,
+                    'status_respons' => $status,
+                    'waktu_respons_ms' => $durationMs,
+                    'diminta_pada' => \Carbon\Carbon::now()
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Memeriksa status konektivitas API eksternal.
+     */
+    public function periksaKoneksiApi(): array
+    {
+        $apis = [
+            'Open-Meteo (Cuaca)' => 'https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0',
+            'World Bank (Ekonomi)' => 'https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.CD?format=json&per_page=1',
+            'ExchangeRate-API (Mata Uang)' => 'https://open.er-api.com/v6/latest/USD',
+            'CNBC RSS (Berita)' => 'https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords=shipping',
+            'Taylor Jordan (Pelabuhan)' => 'https://raw.githubusercontent.com/tayljordan/ports/main/ports.json'
+        ];
+
+        $statusKoneksi = [];
+
+        foreach ($apis as $nama => $url) {
+            try {
+                $response = Http::timeout(3)->get($url);
+                $statusKoneksi[$nama] = $response->successful() ? 'Connected' : 'Error (' . $response->status() . ')';
+            } catch (Exception $e) {
+                $statusKoneksi[$nama] = 'Disconnected';
+            }
+        }
+
+        return $statusKoneksi;
     }
 }

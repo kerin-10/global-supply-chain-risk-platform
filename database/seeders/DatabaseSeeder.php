@@ -95,199 +95,92 @@ class DatabaseSeeder extends Seeder
             NegativeWord::updateOrCreate(['kata' => $word]);
         }
 
-        // 4. Seed Countries (Negara) - 10 Countries
-        $countriesData = [
-            [
-                'nama' => 'Germany', 'kode_iso2' => 'DE', 'kode_iso3' => 'DEU', 'wilayah' => 'Eropa',
-                'ibu_kota' => 'Berlin', 'kode_mata_uang' => 'EUR', 'nama_mata_uang' => 'Euro',
-                'bahasa' => 'Jerman', 'populasi' => 83200000, 'pdb' => 4260000000000,
-                'inflasi' => 2.3, 'nilai_ekspor' => 1650000000000, 'nilai_impor' => 1420000000000,
-                'lintang' => 51.1657, 'bujur' => 10.4515
-            ],
-            [
-                'nama' => 'China', 'kode_iso2' => 'CN', 'kode_iso3' => 'CHN', 'wilayah' => 'Asia',
-                'ibu_kota' => 'Beijing', 'kode_mata_uang' => 'CNY', 'nama_mata_uang' => 'Yuan Renminbi',
-                'bahasa' => 'Mandarin', 'populasi' => 1412000000, 'pdb' => 17730000000000,
-                'inflasi' => 0.7, 'nilai_ekspor' => 3590000000000, 'nilai_impor' => 2680000000000,
-                'lintang' => 35.8617, 'bujur' => 104.1954
-            ],
-            [
-                'nama' => 'Indonesia', 'kode_iso2' => 'ID', 'kode_iso3' => 'IDN', 'wilayah' => 'Asia',
-                'ibu_kota' => 'Jakarta', 'kode_mata_uang' => 'IDR', 'nama_mata_uang' => 'Rupiah',
-                'bahasa' => 'Indonesia', 'populasi' => 273800000, 'pdb' => 1186000000000,
-                'inflasi' => 2.6, 'nilai_ekspor' => 292000000000, 'nilai_impor' => 237000000000,
-                'lintang' => -0.7893, 'bujur' => 113.9213
-            ],
-            [
-                'nama' => 'Australia', 'kode_iso2' => 'AU', 'kode_iso3' => 'AUS', 'wilayah' => 'Oseania',
-                'ibu_kota' => 'Canberra', 'kode_mata_uang' => 'AUD', 'nama_mata_uang' => 'Dolar Australia',
-                'bahasa' => 'Inggris', 'populasi' => 25680000, 'pdb' => 1540000000000,
-                'inflasi' => 3.6, 'nilai_ekspor' => 340000000000, 'nilai_impor' => 280000000000,
-                'lintang' => -25.2744, 'bujur' => 133.7751
-            ],
-            [
-                'nama' => 'United States', 'kode_iso2' => 'US', 'kode_iso3' => 'USA', 'wilayah' => 'Amerika',
-                'ibu_kota' => 'Washington D.C.', 'kode_mata_uang' => 'USD', 'nama_mata_uang' => 'Dolar AS',
-                'bahasa' => 'Inggris', 'populasi' => 331900000, 'pdb' => 23320000000000,
-                'inflasi' => 3.1, 'nilai_ekspor' => 1750000000000, 'nilai_impor' => 2930000000000,
-                'lintang' => 37.0902, 'bujur' => -95.7129
-            ],
-            [
-                'nama' => 'Singapore', 'kode_iso2' => 'SG', 'kode_iso3' => 'SGP', 'wilayah' => 'Asia',
-                'ibu_kota' => 'Singapura', 'kode_mata_uang' => 'SGD', 'nama_mata_uang' => 'Dolar Singapura',
-                'bahasa' => 'Inggris, Melayu, Mandarin, Tamil', 'populasi' => 5450000, 'pdb' => 396800000000,
-                'inflasi' => 4.8, 'nilai_ekspor' => 450000000000, 'nilai_impor' => 390000000000,
-                'lintang' => 1.3521, 'bujur' => 103.8198
-            ],
-            [
-                'nama' => 'Japan', 'kode_iso2' => 'JP', 'kode_iso3' => 'JPN', 'wilayah' => 'Asia',
-                'ibu_kota' => 'Tokyo', 'kode_mata_uang' => 'JPY', 'nama_mata_uang' => 'Yen',
-                'bahasa' => 'Jepang', 'populasi' => 125700000, 'pdb' => 4940000000000,
-                'inflasi' => 2.5, 'nilai_ekspor' => 710000000000, 'nilai_impor' => 760000000000,
-                'lintang' => 36.2048, 'bujur' => 138.2529
-            ],
-            [
-                'nama' => 'Brazil', 'kode_iso2' => 'BR', 'kode_iso3' => 'BRA', 'wilayah' => 'Amerika',
-                'ibu_kota' => 'Brasilia', 'kode_mata_uang' => 'BRL', 'nama_mata_uang' => 'Real Brasil',
-                'bahasa' => 'Portugis', 'populasi' => 214300000, 'pdb' => 1608000000000,
-                'inflasi' => 4.6, 'nilai_ekspor' => 280000000000, 'nilai_impor' => 220000000000,
-                'lintang' => -14.2350, 'bujur' => -51.9253
-            ],
-            [
-                'nama' => 'India', 'kode_iso2' => 'IN', 'kode_iso3' => 'IND', 'wilayah' => 'Asia',
-                'ibu_kota' => 'New Delhi', 'kode_mata_uang' => 'INR', 'nama_mata_uang' => 'Rupee India',
-                'bahasa' => 'Hindi, Inggris', 'populasi' => 1408000000, 'pdb' => 3176000000000,
-                'inflasi' => 5.4, 'nilai_ekspor' => 390000000000, 'nilai_impor' => 570000000000,
-                'lintang' => 20.5937, 'bujur' => 78.9629
-            ],
-            [
-                'nama' => 'Netherlands', 'kode_iso2' => 'NL', 'kode_iso3' => 'NLD', 'wilayah' => 'Eropa',
-                'ibu_kota' => 'Amsterdam', 'kode_mata_uang' => 'EUR', 'nama_mata_uang' => 'Euro',
-                'bahasa' => 'Belanda', 'populasi' => 17530000, 'pdb' => 1018000000000,
-                'inflasi' => 3.8, 'nilai_ekspor' => 690000000000, 'nilai_impor' => 610000000000,
-                'lintang' => 52.1326, 'bujur' => 5.2913
-            ]
-        ];
-
-        foreach ($countriesData as $cData) {
-            $country = Country::updateOrCreate(['kode_iso2' => $cData['kode_iso2']], $cData);
-
-            // Seed historical economic indicators (2020-2024)
-            for ($year = 2020; $year <= 2024; $year++) {
-                $factor = 1 + (($year - 2020) * 0.03) + (rand(-2, 2) / 100);
-                CountryEconomicHistory::updateOrCreate(
-                    [
-                        'negara_id' => $country->id,
-                        'tahun' => $year
-                    ],
-                    [
-                        'pdb' => $country->pdb * $factor,
-                        'inflasi' => max(0.1, $country->inflasi + (($year - 2022) * 0.8) + (rand(-1, 1) * 0.3)),
-                        'populasi' => intval($country->populasi * (1 + (($year - 2020) * 0.005))),
-                        'nilai_ekspor' => $country->nilai_ekspor * $factor,
-                        'nilai_impor' => $country->nilai_impor * $factor,
-                    ]
-                );
-            }
-
-            // Seed initial mock current risk scores (Skor Risiko)
-            $wRisk = rand(15, 65);
-            $iRisk = rand(20, 80);
-            $cRisk = rand(10, 50);
-            $sRisk = rand(25, 75);
-            $totRisk = intval((0.3 * $wRisk) + (0.2 * $iRisk) + (0.1 * $cRisk) + (0.4 * $sRisk));
-            $level = $totRisk < 35 ? 'Rendah' : ($totRisk < 60 ? 'Sedang' : 'Tinggi');
-
-            RiskScore::updateOrCreate(
-                ['negara_id' => $country->id],
-                [
-                    'risiko_cuaca' => $wRisk,
-                    'risiko_inflasi' => $iRisk,
-                    'risiko_nilai_tukar' => $cRisk,
-                    'risiko_sentimen_berita' => $sRisk,
-                    'total_risiko' => $totRisk,
-                    'tingkat_risiko' => $level
-                ]
-            );
-
-            // Seed historical risk logs
-            for ($i = 30; $i >= 0; $i -= 5) {
-                $calcAt = Carbon::now()->subDays($i);
-                RiskScoreHistory::create([
-                    'negara_id' => $country->id,
-                    'risiko_cuaca' => max(10, $wRisk + rand(-10, 10)),
-                    'risiko_inflasi' => $iRisk,
-                    'risiko_nilai_tukar' => max(10, $cRisk + rand(-5, 5)),
-                    'risiko_sentimen_berita' => max(10, $sRisk + rand(-15, 15)),
-                    'total_risiko' => max(10, $totRisk + rand(-8, 8)),
-                    'dihitung_pada' => $calcAt
-                ]);
-            }
-        }
-
-        // 5. Seed Ports (Pelabuhan) - 10 Major World Ports
-        $portsData = [
-            ['nama' => 'Port of Rotterdam', 'lintang' => 51.9489, 'bujur' => 4.1372, 'country_code' => 'NL', 'wilayah' => 'Eropa', 'nomor_wpi' => 'WPI-001'],
-            ['nama' => 'Port of Singapore', 'lintang' => 1.2740, 'bujur' => 103.8400, 'country_code' => 'SG', 'wilayah' => 'Asia', 'nomor_wpi' => 'WPI-002'],
-            ['nama' => 'Port of Shanghai', 'lintang' => 30.6200, 'bujur' => 122.0600, 'country_code' => 'CN', 'wilayah' => 'Asia', 'nomor_wpi' => 'WPI-003'],
-            ['nama' => 'Port of Tanjung Priok', 'lintang' => -6.1000, 'bujur' => 106.8900, 'country_code' => 'ID', 'wilayah' => 'Asia', 'nomor_wpi' => 'WPI-004'],
-            ['nama' => 'Port of Hamburg', 'lintang' => 53.5300, 'bujur' => 9.9400, 'country_code' => 'DE', 'wilayah' => 'Eropa', 'nomor_wpi' => 'WPI-005'],
-            ['nama' => 'Port of Sydney', 'lintang' => -33.8500, 'bujur' => 151.2100, 'country_code' => 'AU', 'wilayah' => 'Oseania', 'nomor_wpi' => 'WPI-006'],
-            ['nama' => 'Port of Los Angeles', 'lintang' => 33.7400, 'bujur' => -118.2600, 'country_code' => 'US', 'wilayah' => 'Amerika', 'nomor_wpi' => 'WPI-007'],
-            ['nama' => 'Port of Tokyo', 'lintang' => 35.6200, 'bujur' => 139.7800, 'country_code' => 'JP', 'wilayah' => 'Asia', 'nomor_wpi' => 'WPI-008'],
-            ['nama' => 'Port of Santos', 'lintang' => -23.9600, 'bujur' => -46.3000, 'country_code' => 'BR', 'wilayah' => 'Amerika', 'nomor_wpi' => 'WPI-009'],
-            ['nama' => 'Port of Mumbai', 'lintang' => 18.9400, 'bujur' => 72.8400, 'country_code' => 'IN', 'wilayah' => 'Asia', 'nomor_wpi' => 'WPI-010']
-        ];
-
-        foreach ($portsData as $pData) {
-            $country = Country::where('kode_iso2', $pData['country_code'])->first();
-            if ($country) {
-                $port = Port::updateOrCreate(
-                    ['nomor_wpi' => $pData['nomor_wpi']],
-                    [
-                        'nama' => $pData['nama'],
-                        'lintang' => $pData['lintang'],
-                        'bujur' => $pData['bujur'],
-                        'negara_id' => $country->id,
-                        'kode_negara' => $country->kode_iso2,
-                        'wilayah' => $pData['wilayah']
-                    ]
-                );
-
-                // Seed dummy port congestion (Kemacetan Pelabuhan)
-                $delays = rand(0, 36);
-                $cLevel = $delays < 6 ? 'Rendah' : ($delays < 18 ? 'Sedang' : 'Tinggi');
-                PortCongestion::create([
-                    'pelabuhan_id' => $port->id,
-                    'waktu_tunda_jam' => $delays,
-                    'tingkat_kemacetan' => $cLevel,
-                    'deskripsi_status' => 'Operasional normal dengan sedikit penyesuaian jadwal karena kapasitas musiman.',
-                    'dilaporkan_pada' => Carbon::now()
-                ]);
-            }
-        }
+        // 4. Seed Countries and Ports (250 Countries + Global Ports)
+        $this->call([
+            CountrySeeder::class
+        ]);
 
         // 6. Seed Default Analysis Articles (Artikel Analisis)
-        Article::updateOrCreate(
-            ['judul' => 'Gangguan Geopolitik Laut Merah & Tarif Pengiriman'],
+        $articles = [
             [
+                'judul' => 'Gangguan Geopolitik Laut Merah & Tarif Pengiriman',
+                'kategori' => 'Geopolitik',
+                'gambar_url' => 'https://images.unsplash.com/photo-1586528116311-ad8ed7c50a63?q=80&w=800&auto=format&fit=crop',
                 'ringkasan' => 'Analisis jalur alternatif pengiriman di sekitar Tanjung Harapan yang memicu kenaikan tarif logistik dan inflasi bahan bakar.',
                 'konten' => '<p>Ketegangan geopolitik baru-baru ini di wilayah Laut Merah memaksa banyak operator kapal untuk mengalihkan rute kapal mereka menjauhi Terusan Suez, memilih rute memutar yang lebih jauh melewati Tanjung Harapan, Afrika Selatan. Rute alternatif ini menambah durasi pelayaran selama 10 hingga 14 hari dari Asia ke Eropa Utara, yang memicu peningkatan signifikan pada biaya operasional kapal.</p><h5>Analisis Dampak:</h5><ul><li><strong>Konsumsi Bahan Bakar:</strong> Mengalami kenaikan sebesar 30-35% per perjalanan bolak-balik.</li><li><strong>Tarif Kontainer:</strong> Indeks tarif pengiriman spot melonjak hingga 150% pada koridor logistik utama.</li><li><strong>Kemacetan Pelabuhan:</strong> Jadwal kedatangan kapal yang tidak menentu mulai menimbulkan antrean di pelabuhan Eropa seperti Rotterdam dan Hamburg.</li></ul><p>Pelaku bisnis disarankan untuk menjaga tingkat persediaan cadangan (buffer stock) ekstra selama 2-3 minggu guna menghindari terhentinya proses produksi.</p>',
-                'penulis_id' => $admin->id,
-                'status' => 'Published',
                 'diterbitkan_pada' => Carbon::now()->subDays(4)
-            ]
-        );
-
-        Article::updateOrCreate(
-            ['judul' => 'Kekeringan Terusan Panama & Pergeseran Logistik Intermodal'],
+            ],
             [
+                'judul' => 'Kekeringan Terusan Panama & Pergeseran Logistik Intermodal',
+                'kategori' => 'Cuaca & Iklim',
+                'gambar_url' => 'https://images.unsplash.com/photo-1542293787349-2e633d7b328a?q=80&w=800&auto=format&fit=crop',
                 'ringkasan' => 'Kekeringan ekstrem membatasi lalu lintas harian Terusan Panama, memindahkan kargo ke jalur kereta pantai barat AS.',
                 'konten' => '<p>Otoritas Terusan Panama telah mengurangi kuota transit harian kapal akibat tingkat air Danau Gatun yang berada pada level terendah dalam sejarah. Hambatan ini memaksa kapal curah untuk mengambil rute memutar yang lebih jauh atau membongkar muatan kontainer di pelabuhan Pantai Barat AS (seperti Los Angeles) untuk dikirim melalui jalur kereta api domestik.</p><p>Pergeseran ini meningkatkan volume logistik intermodal di AS secara drastis, memicu kenaikan tarif truk domestik, serta mengubah prioritas distribusi barang. Risiko rantai pasok untuk komoditas ekspor segar dari Amerika Latin (seperti kopi dan buah-buahan) berada pada tingkat yang sangat tinggi karena keterbatasan kapasitas penyimpanan dingin.</p>',
-                'penulis_id' => $admin->id,
-                'status' => 'Published',
                 'diterbitkan_pada' => Carbon::now()->subDays(2)
+            ],
+            [
+                'judul' => 'Inovasi AI dalam Prediksi Kemacetan Pelabuhan',
+                'kategori' => 'Teknologi',
+                'gambar_url' => 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Bagaimana kecerdasan buatan membantu memprediksi dan mengurangi waktu tunggu kapal di pelabuhan utama.',
+                'konten' => '<p>Penerapan algoritma machine learning dan analitik prediktif di pelabuhan-pelabuhan utama seperti Shanghai dan Rotterdam telah berhasil mengurangi kemacetan hingga 20%. Sistem AI ini menganalisis ribuan data points mulai dari cuaca, pergerakan kapal, hingga riwayat keterlambatan untuk memberikan rekomendasi jadwal bongkar muat yang optimal.</p><h5>Manfaat Utama:</h5><ul><li><strong>Optimalisasi Rute:</strong> Memberikan panduan real-time bagi kapal yang mendekati pelabuhan untuk mengurangi waktu idle.</li><li><strong>Efisiensi Bahan Bakar:</strong> Mengurangi emisi karbon dengan meminimalkan waktu tunggu mesin menyala.</li><li><strong>Transparansi Rantai Pasok:</strong> Memberikan estimasi kedatangan yang lebih akurat kepada importir dan penyedia logistik.</li></ul>',
+                'diterbitkan_pada' => Carbon::now()->subDays(6)
+            ],
+            [
+                'judul' => 'Dampak Transisi Energi Hijau pada Biaya Pelayaran',
+                'kategori' => 'Ekonomi',
+                'gambar_url' => 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Kewajiban penggunaan bahan bakar rendah karbon mendorong perombakan infrastruktur kapal dan kenaikan biaya freight.',
+                'konten' => '<p>Aturan IMO 2023 yang mewajibkan industri pelayaran maritim untuk mengurangi intensitas karbon memaksa pemilik kapal untuk beralih ke bahan bakar alternatif seperti LNG, metanol hijau, atau hidrogen. Meskipun ini merupakan langkah positif bagi lingkungan, transisi ini menyebabkan lonjakan biaya operasional jangka pendek.</p><p>Pajak karbon yang mulai diterapkan di Eropa (EU ETS) untuk pelayaran juga menambahkan premi baru pada biaya pengiriman. Pelaku industri rantai pasok harus bersiap menghadapi kenaikan biaya logistik dasar sebesar 10-15% selama masa transisi ini. Investasi pada armada yang lebih efisien menjadi kunci untuk daya saing jangka panjang.</p>',
+                'diterbitkan_pada' => Carbon::now()->subDays(10)
+            ],
+            [
+                'judul' => 'Pergeseran Pusat Manufaktur Global ke Asia Tenggara',
+                'kategori' => 'Pasar Global',
+                'gambar_url' => 'https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Tren "China Plus One" memperkuat posisi negara seperti Vietnam, Indonesia, dan Thailand dalam rantai pasok global.',
+                'konten' => '<p>Ketidakpastian tarif perdagangan dan keinginan untuk mendiversifikasi risiko rantai pasok telah mempercepat strategi "China Plus One" di kalangan perusahaan multinasional. Kawasan Asia Tenggara kini menjadi penerima manfaat utama, dengan peningkatan investasi asing langsung di sektor manufaktur.</p><p>Vietnam memimpin di sektor elektronik, sementara Indonesia berfokus pada ekosistem kendaraan listrik (EV) berkat cadangan nikelnya. Namun, tantangan masih ada berupa infrastruktur pelabuhan dan konektivitas hinterland yang perlu terus ditingkatkan untuk mengimbangi lonjakan volume ekspor.</p>',
+                'diterbitkan_pada' => Carbon::now()->subDays(15)
+            ],
+            [
+                'judul' => 'Ancaman Keamanan Siber di Infrastruktur Logistik Maritim',
+                'kategori' => 'Keamanan',
+                'gambar_url' => 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Meningkatnya serangan ransomware yang menargetkan sistem operasi pelabuhan dan operator kapal logistik global.',
+                'konten' => '<p>Digitalisasi rantai pasok membawa tantangan baru berupa kerentanan terhadap serangan siber. Beberapa pelabuhan besar di Australia dan Eropa baru-baru ini mengalami gangguan operasional akibat serangan ransomware yang melumpuhkan sistem manajemen terminal (TOS).</p><h5>Langkah Mitigasi:</h5><ul><li><strong>Segmentasi Jaringan:</strong> Memisahkan jaringan operasional teknologi (OT) dari jaringan IT korporat.</li><li><strong>Audit Keamanan Rutin:</strong> Melakukan penetration testing berkala pada infrastruktur pelabuhan.</li><li><strong>Pelatihan Karyawan:</strong> Meningkatkan kesadaran akan phishing dan praktik keamanan siber dasar.</li></ul>',
+                'diterbitkan_pada' => Carbon::now()->subDays(18)
+            ],
+            [
+                'judul' => 'Analisis Tren Konsolidasi Perusahaan Pelayaran Logistik',
+                'kategori' => 'Ekonomi',
+                'gambar_url' => 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Bagaimana merger dan akuisisi besar-besaran membentuk ulang peta persaingan dan stabilitas harga pelayaran.',
+                'konten' => '<p>Industri pelayaran logistik global semakin terkonsolidasi di tangan segelintir aliansi raksasa. Hal ini memberikan operator skala besar kekuatan yang belum pernah terjadi sebelumnya dalam menentukan tarif dan mengatur kapasitas. Konsolidasi ini membawa stabilitas harga, tetapi juga mengurangi ruang negosiasi bagi pengirim kargo kecil dan menengah.</p><p>Otoritas anti-monopoli di AS dan Eropa mulai memperhatikan dinamika pasar ini dengan lebih saksama. Diperkirakan akan ada lebih banyak regulasi yang memantau aliansi-aliansi strategis tersebut di tahun mendatang.</p>',
+                'diterbitkan_pada' => Carbon::now()->subDays(22)
+            ],
+            [
+                'judul' => 'Dampak Inflasi terhadap Daya Beli Konsumen dan Volume Kargo',
+                'kategori' => 'Ekonomi',
+                'gambar_url' => 'https://images.unsplash.com/photo-1601597111158-2fceff292cdc?q=80&w=800&auto=format&fit=crop',
+                'ringkasan' => 'Inflasi yang berkepanjangan di negara-negara Barat menyebabkan penurunan impor barang ritel dari Asia.',
+                'konten' => '<p>Tekanan inflasi yang persisten di Amerika Serikat dan Eropa telah melemahkan daya beli konsumen untuk barang-barang diskresi. Akibatnya, para peritel menahan pesanan baru, yang secara langsung berdampak pada penurunan volume kargo di rute trans-Pasifik dan Asia-Eropa.</p><p>Meskipun tarif pengiriman mulai normal kembali ke level sebelum pandemi, rendahnya permintaan memaksa penyedia logistik untuk membatalkan sejumlah pelayaran (blank sailings) guna menyeimbangkan pasokan kapasitas dengan permintaan aktual.</p>',
+                'diterbitkan_pada' => Carbon::now()->subDays(28)
             ]
-        );
+        ];
+
+        foreach ($articles as $art) {
+            Article::updateOrCreate(
+                ['judul' => $art['judul']],
+                [
+                    'kategori' => $art['kategori'],
+                    'gambar_url' => $art['gambar_url'],
+                    'ringkasan' => $art['ringkasan'],
+                    'konten' => $art['konten'],
+                    'penulis_id' => $admin->id,
+                    'status' => 'Published',
+                    'diterbitkan_pada' => $art['diterbitkan_pada']
+                ]
+            );
+        }
     }
 }

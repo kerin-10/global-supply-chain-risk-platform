@@ -10,10 +10,12 @@ class Article extends Model
 
     protected $fillable = [
         'judul',
+        'kategori',
         'ringkasan',
         'konten',
         'penulis_id',
         'status',
+        'gambar_url',
         'diterbitkan_pada'
     ];
 

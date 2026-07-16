@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Perbandingan Negara')
-@section('page-title', '<i class="fas fa-balance-scale me-2" style="color:#f59e0b;"></i>Perbandingan Negara')
+@section('page-title')
+    <i class="fas fa-balance-scale me-2" style="color:#F59E0B;"></i>Perbandingan Negara
+@endsection
 
 @section('content')
 <div class="row g-3 mb-3">
@@ -79,10 +81,31 @@ const negaraData = @json($negaraList);
 
 let radarChart = null;
 
+let ts1, ts2;
+document.addEventListener("DOMContentLoaded", function() {
+    ts1 = new TomSelect('#negara1', {
+    create: false,
+    maxOptions: null,
+    sortField: {
+        field: 'text',
+        direction: 'asc'
+    }
+});
+
+ts2 = new TomSelect('#negara2', {
+    create: false,
+    maxOptions: null,
+    sortField: {
+        field: 'text',
+        direction: 'asc'
+    }
+});
+});
+
 function getNegara(selectId) {
     const sel = document.getElementById(selectId);
-    const opt = sel.options[sel.selectedIndex];
-    return JSON.parse(opt.dataset.obj);
+    const id = parseInt(sel.value);
+    return negaraData.find(n => n.id === id);
 }
 
 function renderDetail(containerId, n) {

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Nilai Tukar Mata Uang')
-@section('page-title', '<i class="fas fa-exchange-alt me-2" style="color:#10b981;"></i>Nilai Tukar Mata Uang')
+@section('page-title')
+<i class="fas fa-exchange-alt me-2" style="color:#10b981;"></i> Nilai Tukar Mata Uang
+@endsection
 
 @section('content')
 <div class="row g-3">
@@ -101,6 +103,11 @@
 
 @push('scripts')
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+    new TomSelect('#base-currency', { create: false });
+    new TomSelect('#target-currency', { create: false });
+});
+
 // Grafik Tren Kurs (simulasi historis berdasarkan data yang tersedia)
 const chartCtx = document.getElementById('chartKurs').getContext('2d');
 const chartKurs = new Chart(chartCtx, {
