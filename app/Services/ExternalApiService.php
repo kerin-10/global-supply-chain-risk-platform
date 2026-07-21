@@ -528,17 +528,19 @@ class ExternalApiService
         $gnewsKey = config('services.gnews.key');
 
         $apis = [
+            'REST Countries (Profil Negara)' => 'https://countries.dev/alpha/ID',
             'Open-Meteo (Cuaca)' => 'https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0',
             'World Bank (Ekonomi)' => 'https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.CD?format=json&per_page=1',
             'ExchangeRate-API (Mata Uang)' => 'https://open.er-api.com/v6/latest/USD',
         ];
 
         if (!empty($gnewsKey)) {
-            $apis['GNews API (Berita)'] = "https://gnews.io/api/v4/search?q=logistics&lang=en&max=1&token={$gnewsKey}";
+            $apis['GNews API (Berita Utama)'] = "https://gnews.io/api/v4/search?q=logistics&lang=en&max=1&token={$gnewsKey}";
         } else {
-            $apis['CNBC RSS (Berita)'] = 'https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords=shipping';
+            $apis['GNews API (Berita Utama)'] = 'https://gnews.io/api/v4/search?q=test'; // Akan error 403, menandakan butuh token
         }
 
+        $apis['CNBC RSS (Berita Cadangan)'] = 'https://search.cnbc.com/rs/search/all/view.rss?partnerId=2000&keywords=shipping';
         $apis['Taylor Jordan (Pelabuhan)'] = 'https://raw.githubusercontent.com/tayljordan/ports/main/ports.json';
 
         $statusKoneksi = [];
