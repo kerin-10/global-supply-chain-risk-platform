@@ -13,47 +13,69 @@ class ExternalApiService
     /**
      * Helper to make HTTP request and log it.
      */
-    private function kirimPermintaan(string $apiName, string $url, string $method = 'GET', array $options = []): ?array
-    {
-        $startTime = microtime(true);
-        $status = 500;
-        $responseBody = null;
+   private function kirimPermintaan(string $apiName, string $url, string $method = 'GET', array $options = []): ?array
+{
+    $startTime = microtime(true);
+    $status = 500;
 
-        try {
-            $response = $method === 'POST' 
-                ? Http::timeout(10)->withHeaders($options['headers'] ?? [])->post($url, $options['body'] ?? [])
-                : Http::timeout(10)->withHeaders($options['headers'] ?? [])->get($url, $options['query'] ?? []);
-            
-            $status = $response->status();
-            $responseBody = $response->body();
-            
-            if ($response->successful()) {
-    return $response->json();
-}
+    try {
 
-Log::error("API {$apiName} gagal", [
-    'status' => $response->status(),
-    'body' => $response->body(),
-    'url' => $url
-]);
-
-        } catch (Exception $e) {
-            Log::error("Gagal memanggil API {$apiName}: " . $e->getMessage());
-        } finally {
-            $durationMs = intval((microtime(true) - $startTime) * 1000);
-            
-            // Catat log ke database
-            ApiRequestLog::create([
-                'nama_api' => $apiName,
-                'endpoint' => $url,
-                'status_respons' => $status,
-                'waktu_respons_ms' => $durationMs,
-                'diminta_pada' => Carbon::now()
-            ]);
+        if ($method === 'POST') {
+            $response = Http::retry(3, 1000)
+                ->timeout(30)
+                ->withHeaders($options['headers'] ?? [])
+                ->post($url, $options['body'] ?? []);
+        } else {
+            $response = Http::retry(3, 1000)
+                ->timeout(30)
+                ->withHeaders($options['headers'] ?? [])
+                ->get($url, $options['query'] ?? []);
         }
 
-        return null;
+        $status = $response->status();
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        Log::error("API {$apiName} gagal", [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+            'url'    => $url
+        ]);
+
+    } catch (Exception $e) {
+
+        // Jika timeout
+        if (
+            str_contains(strtolower($e->getMessage()), 'timed out') ||
+            str_contains(strtolower($e->getMessage()), 'timeout')
+        ) {
+            $status = 408;
+        } else {
+            $status = 500;
+        }
+
+        Log::error("Gagal memanggil API {$apiName}", [
+            'url'   => $url,
+            'error' => $e->getMessage()
+        ]);
+
+    } finally {
+
+        $durationMs = intval((microtime(true) - $startTime) * 1000);
+
+        ApiRequestLog::create([
+            'nama_api'          => $apiName,
+            'endpoint'          => $url,
+            'status_respons'    => $status,
+            'waktu_respons_ms'  => $durationMs,
+            'diminta_pada'      => Carbon::now()
+        ]);
     }
+
+    return null;
+}
 
     /**
      * Mengambil data cuaca real-time dari Open-Meteo.
