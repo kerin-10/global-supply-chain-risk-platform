@@ -517,6 +517,9 @@ class CountryApiController extends Controller
 
     foreach ($beritaList as $item) {
 
+        $teksAnalisis = ($item['judul'] ?? '') . ' ' . ($item['deskripsi'] ?? '');
+        $hasilSentimen = $this->sentimentService->analisisSentimen($teksAnalisis);
+
         NewsCache::create([
             'negara_id' => $negara->id,
             'judul' => $item['judul'],
@@ -525,9 +528,9 @@ class CountryApiController extends Controller
             'tautan_url' => $item['tautan_url'],
             'sumber' => $item['sumber'],
             'diterbitkan_pada' => $item['diterbitkan_pada'],
-            'sentimen' => 'Netral',
-            'skor_sentimen_positif' => 0,
-            'skor_sentimen_negatif' => 0
+            'sentimen' => $hasilSentimen['sentimen'],
+            'skor_sentimen_positif' => $hasilSentimen['skor_positif'],
+            'skor_sentimen_negatif' => $hasilSentimen['skor_negatif']
         ]);
 
     }
