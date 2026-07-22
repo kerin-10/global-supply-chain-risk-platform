@@ -78,14 +78,27 @@ class DashboardController extends Controller
      * Halaman intelijen berita & analisis sentimen.
      */
     public function news()
-    {
-        $negaraList = Country::orderBy('nama')->get();
-        $beritaTerbaru = NewsCache::with('country')
+{
+    $negaraList = Country::orderBy('nama')->get();
+
+    $beritaTerbaru = NewsCache::with('country')
         ->orderBy('diterbitkan_pada', 'desc')
         ->paginate(20);
 
-        return view('dashboard.news', compact('negaraList', 'beritaTerbaru'));
-    }
+    $jumlahPositif = NewsCache::where('sentimen', 'Positif')->count();
+
+    $jumlahNetral = NewsCache::where('sentimen', 'Netral')->count();
+
+    $jumlahNegatif = NewsCache::where('sentimen', 'Negatif')->count();
+
+    return view('dashboard.news', compact(
+        'negaraList',
+        'beritaTerbaru',
+        'jumlahPositif',
+        'jumlahNetral',
+        'jumlahNegatif'
+    ));
+}
 
     /**
      * Halaman perbandingan dua negara.

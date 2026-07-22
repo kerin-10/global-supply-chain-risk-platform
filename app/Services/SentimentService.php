@@ -42,13 +42,22 @@ class SentimentService
             $kata = trim($kata);
             if (empty($kata)) continue;
 
-            if (in_array($kata, $kataPositif)) {
-                $skorPositif++;
-                $kataPositifDitemukan[] = $kata;
+            // Cek kata positif (mendukung pencocokan sebagian)
+            foreach ($kataPositif as $positif) {
+                if (str_contains($kata, $positif) || str_contains($positif, $kata)) {
+                    $skorPositif++;
+                    $kataPositifDitemukan[] = $positif;
+                    break;
+                }
             }
-            if (in_array($kata, $kataNegatif)) {
-                $skorNegatif++;
-                $kataNegatifDitemukan[] = $kata;
+
+            // Cek kata negatif (mendukung pencocokan sebagian)
+            foreach ($kataNegatif as $negatif) {
+                if (str_contains($kata, $negatif) || str_contains($negatif, $kata)) {
+                    $skorNegatif++;
+                    $kataNegatifDitemukan[] = $negatif;
+                    break;
+                }
             }
         }
 

@@ -16,15 +16,6 @@
                         @foreach($negaraList as $n)
                             <option value="{{ $n->kode_iso2 }}">{{ $n->nama }}</option>
                         @endforeach
-                        @foreach($negaraList as $n)
-    @if($n->nama == 'Indonesia')
-        <div style="color:red">INDONESIA DITEMUKAN - {{ $n->kode_iso2 }}</div>
-    @endif
-
-    <option value="{{ $n->kode_iso2 }}">
-        {{ $n->nama }}
-    </option>
-@endforeach
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -49,19 +40,19 @@
     <div class="col-md-4">
         <div class="stat-card" style="border-color:rgba(16,185,129,0.3);">
             <div class="stat-icon" style="background:rgba(16,185,129,0.15);"><i class="fas fa-smile" style="color:#10b981;"></i></div>
-            <div><div class="stat-val" style="color:#10b981;" id="pct-positif">0%</div><div class="stat-label">Sentimen Positif</div></div>
+            <div><div class="stat-val" style="color:#10b981;" id="pct-positif">0 (0%)</div><div class="stat-label">Sentimen Positif</div></div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card" style="border-color:rgba(100,116,139,0.3);">
             <div class="stat-icon" style="background:rgba(100,116,139,0.15);"><i class="fas fa-meh" style="color:#94a3b8;"></i></div>
-            <div><div class="stat-val" style="color:#94a3b8;" id="pct-netral">0%</div><div class="stat-label">Sentimen Netral</div></div>
+            <div><div class="stat-val" style="color:#94a3b8;" id="pct-netral">0 (0%)</div><div class="stat-label">Sentimen Netral</div></div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card" style="border-color:rgba(239,68,68,0.3);">
             <div class="stat-icon" style="background:rgba(239,68,68,0.15);"><i class="fas fa-frown" style="color:#ef4444;"></i></div>
-            <div><div class="stat-val" style="color:#ef4444;" id="pct-negatif">0%</div><div class="stat-label">Sentimen Negatif</div></div>
+            <div><div class="stat-val" style="color:#ef4444;" id="pct-negatif">0 (0%)</div><div class="stat-label">Sentimen Negatif</div></div>
         </div>
     </div>
 </div>
@@ -114,6 +105,8 @@
         </div>
     </div>
 </div>
+
+
 @endsection
 
 @push('scripts')
@@ -121,38 +114,39 @@
 let tsPilihNegara;
 let chartSentimen;
 
-tsPilihNegara = new TomSelect('#pilihNegara', {
-    create: false,
-    valueField: 'value',
-    labelField: 'text',
-    searchField: ['text'],
-    sortField: {
-        field: 'text',
-        direction: 'asc'
-    },
-    maxOptions: null,
-    onChange: function () {
-        muatBerita(false);
-    }
-});
-
-    console.log(document.querySelectorAll('#pilihNegara option').length);
-
-    const ctxSentimen = document.getElementById('chartSentimen').getContext('2d');
-    chartSentimen = new Chart(ctxSentimen, {
-        type: 'doughnut',
-        data: {
-            labels: ['Positif', 'Netral', 'Negatif'],
-            datasets: [{ data: [0,0,0], backgroundColor: ['rgba(16,185,129,0.7)','rgba(100,116,139,0.7)','rgba(239,68,68,0.7)'], borderWidth: 0 }]
+document.addEventListener('DOMContentLoaded', function () {
+    tsPilihNegara = new TomSelect('#pilihNegara', {
+        create: false,
+        valueField: 'value',
+        labelField: 'text',
+        searchField: ['text'],
+        sortField: {
+            field: 'text',
+            direction: 'asc'
         },
-        options: {
-            responsive: true, cutout: '68%',
-            plugins: {
-                legend: { labels: { color: 'var(--text-muted)', font: { family:'Inter', size:12 } } },
-                tooltip: { backgroundColor: 'var(--bg-card)', titleColor:'var(--text-primary)', bodyColor:'var(--text-muted)' }
-            }
+        maxOptions: null,
+        onChange: function () {
+            muatBerita(false);
         }
     });
+
+    const ctxSentimen = document.getElementById('chartSentimen');
+    if (ctxSentimen) {
+        chartSentimen = new Chart(ctxSentimen.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Positif', 'Netral', 'Negatif'],
+                datasets: [{ data: [0,0,0], backgroundColor: ['rgba(16,185,129,0.7)','rgba(100,116,139,0.7)','rgba(239,68,68,0.7)'], borderWidth: 0 }]
+            },
+            options: {
+                responsive: true, cutout: '68%',
+                plugins: {
+                    legend: { labels: { color: 'var(--text-muted)', font: { family:'Inter', size:12 } } },
+                    tooltip: { backgroundColor: 'var(--bg-card)', titleColor:'var(--text-primary)', bodyColor:'var(--text-muted)' }
+                }
+            }
+        });
+    }
 
     // Muat berita global pertama kali
     muatBerita(false);
@@ -212,9 +206,9 @@ async function muatBerita(sync = false) {
 
         const total = pos + neg + net;
         if (total > 0) {
-            document.getElementById('pct-positif').textContent = Math.round(pos/total*100) + '%';
-            document.getElementById('pct-negatif').textContent = Math.round(neg/total*100) + '%';
-            document.getElementById('pct-netral').textContent  = Math.round(net/total*100) + '%';
+            document.getElementById('pct-positif').textContent = pos + ' (' + Math.round(pos/total*100) + '%)';
+            document.getElementById('pct-negatif').textContent = neg + ' (' + Math.round(neg/total*100) + '%)';
+            document.getElementById('pct-netral').textContent  = net + ' (' + Math.round(net/total*100) + '%)';
             document.getElementById('sentiment-panel').style.setProperty('display', 'flex', 'important');
             chartSentimen.data.datasets[0].data = [pos, net, neg];
             chartSentimen.update();

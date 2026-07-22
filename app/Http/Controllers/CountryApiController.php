@@ -51,7 +51,7 @@ class CountryApiController extends Controller
             'data' => $negaraList
         ]);
     }
-
+    
     /**
      * GET /api/risk
      * Mengambil detail pembagian skor risiko untuk suatu negara.
@@ -224,43 +224,57 @@ class CountryApiController extends Controller
      * GET /api/news
      * Mengambil dan menganalisis berita terkini (parameter kode_iso2 opsional).
      */
-    public function news(Request $request)
-    {
-        $kodeIso2 = $request->get('kode_iso2');
+   public function news(Request $request)
+{
+    $kodeIso2 = $request->get('kode_iso2');
 
-    
+    if (!empty($kodeIso2)) {
 
-        if (!empty($kodeIso2)) {
-            $negara = Country::where('kode_iso2', $kodeIso2)->first();
+        $negara = Country::where('kode_iso2', $kodeIso2)->first();
 
-            if (!$negara) {
-                return response()->json(['status' => 'error', 'pesan' => 'Negara tidak ditemukan.'], 404);
-            }
-
-            // Cek jika cache berita kadaluarsa (lebih dari 4 jam) atau pengguna memaksa sinkronisasi
-            $staleTime = Carbon::now()->subHours(4);
-            $syncTerpaksa = $request->has('sync') && $request->sync === 'true';
-
-            $totalBerita = NewsCache::where('negara_id', $negara->id)->count();
-
-            if ($totalBerita === 0 || $syncTerpaksa || $negara->sinkronisasi_terakhir_pada === null || $negara->sinkronisasi_terakhir_pada < $staleTime) {
-                $this->sinkronisasiBeritaDanRisiko($negara);
-            }
-
-            $beritaList = NewsCache::where('negara_id', $negara->id)->orderBy('diterbitkan_pada', 'desc')->take(20)->get();
-            $negaraNama = $negara->nama;
-        } else {
-            // Jika kosong, ambil berita dari cache secara global
-            $beritaList = NewsCache::with('country')->orderBy('diterbitkan_pada', 'desc')->take(30)->get();
-            $negaraNama = 'Global';
+        if (!$negara) {
+            return response()->json([
+                'status' => 'error',
+                'pesan' => 'Negara tidak ditemukan.'
+            ], 404);
         }
 
-        return response()->json([
-            'status' => 'sukses',
-            'negara' => $negaraNama,
-            'data' => $beritaList
-        ]);
+        $staleTime = Carbon::now()->subHours(4);
+        $syncTerpaksa = $request->boolean('sync');
+
+        $totalBerita = NewsCache::where('negara_id', $negara->id)->count();
+
+        if (
+            $totalBerita == 0 ||
+            $syncTerpaksa ||
+            $negara->sinkronisasi_terakhir_pada == null ||
+            $negara->sinkronisasi_terakhir_pada < $staleTime
+        ) {
+            $this->sinkronisasiBeritaDanRisiko($negara);
+        }
+
+        $beritaList = NewsCache::with('country')
+            ->where('negara_id', $negara->id)
+            ->orderBy('diterbitkan_pada', 'desc')
+            ->get();
+
+        $negaraNama = $negara->nama;
+
+    } else {
+
+        $beritaList = NewsCache::with('country')
+            ->orderBy('diterbitkan_pada', 'desc')
+            ->get();
+
+        $negaraNama = 'Global';
     }
+
+    return response()->json([
+        'status' => 'sukses',
+        'negara' => $negaraNama,
+        'data' => $beritaList
+    ]);
+}
 
     /**
      * GET /api/currency
@@ -515,10 +529,15 @@ class CountryApiController extends Controller
 
     NewsCache::where('negara_id', $negara->id)->delete();
 
-    foreach ($beritaList as $item) {
+   foreach ($beritaList as $item) {
 
-        $teksAnalisis = ($item['judul'] ?? '') . ' ' . ($item['deskripsi'] ?? '');
+        $teksAnalisis = ($item['judul'] ?? '') . ' ' . ($item['deskripsi'] ?? '') . ' ' . ($item['konten'] ?? '');
         $hasilSentimen = $this->sentimentService->analisisSentimen($teksAnalisis);
+
+        \Illuminate\Support\Facades\Log::info('Analisis Sentimen Berjalan', [
+            'judul' => $item['judul']
+        ]);
+        \Illuminate\Support\Facades\Log::info('Hasil Sentimen', $hasilSentimen);
 
         NewsCache::create([
             'negara_id' => $negara->id,
@@ -532,7 +551,6 @@ class CountryApiController extends Controller
             'skor_sentimen_positif' => $hasilSentimen['skor_positif'],
             'skor_sentimen_negatif' => $hasilSentimen['skor_negatif']
         ]);
-
     }
 }
 
