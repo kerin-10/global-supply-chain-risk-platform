@@ -197,7 +197,25 @@
                     <h6 class="mb-0 fw-700"><i class="fas fa-list me-2" style="color:#8b5cf6;"></i>Daftar Pelabuhan <span id="port-count" class="badge" style="background:rgba(139,92,246,0.2);color:#8b5cf6;font-size:0.7rem;">{{ $pelabuhanList->count() }}</span></h6>
                 </div>
                 <div style="max-height:420px;overflow-y:auto;" id="port-list">
-                    @foreach($pelabuhanList as $pelabuhan)
+                    @php
+                    $jumlahNegara = [];
+                    @endphp
+
+                @foreach($pelabuhanList as $pelabuhan)
+
+                    @php
+                        $kode = $pelabuhan->kode_negara;
+
+                        if (!isset($jumlahNegara[$kode])) {
+                            $jumlahNegara[$kode] = 0;
+                        }
+
+                        $jumlahNegara[$kode]++;
+                    @endphp
+
+                    @if($jumlahNegara[$kode] > 5)
+                        @continue
+                    @endif
                     @php
                         $kemacetan = $pelabuhan->latestCongestion;
                         $tk = $kemacetan ? $kemacetan->tingkat_kemacetan : 'N/A';
@@ -329,7 +347,21 @@ function updatePortList(data) {
     let html = '';
     let countRendah = 0, countSedang = 0, countTinggi = 0;
 
-    data.forEach(p => {
+    const jumlahNegara = {};
+
+        data.forEach(p => {
+
+            const kode = p.kode_negara;
+
+            if (!jumlahNegara[kode]) {
+                jumlahNegara[kode] = 0;
+            }
+
+            jumlahNegara[kode]++;
+
+            if (jumlahNegara[kode] > 5) {
+                return;
+            }
         const kemacetan = p.latest_congestion;
         const tk = kemacetan ? kemacetan.tingkat_kemacetan : 'N/A';
         const badgeClass = tk === 'Rendah' ? 'badge-rendah-km' : (tk === 'Sedang' ? 'badge-sedang-km' : (tk === 'Tinggi' ? 'badge-tinggi-km' : ''));

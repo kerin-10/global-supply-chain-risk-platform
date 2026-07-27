@@ -34,7 +34,7 @@
         </a>
     </div>
 
-    <form action="{{ route('admin.artikel.update', $artikel->id) }}" method="POST">
+    <form id="artikelForm" action="{{ route('admin.artikel.update', $artikel->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="row g-3 mb-3">
@@ -60,7 +60,7 @@
 
         <div class="mb-3">
             <label class="form-label" style="font-weight:600; color:var(--text-primary);">Isi Konten Artikel</label>
-            <input type="hidden" name="konten" id="kontenInput" required>
+            <input type="hidden" name="konten" id="kontenInput">
             <div id="editor-container">{!! $artikel->konten !!}</div>
         </div>
 
@@ -100,10 +100,14 @@
     });
 
     // Populate hidden input before submit
-    var form = document.querySelector('form');
-    form.onsubmit = function() {
+    var form = document.querySelector('#artikelForm');
+    form.onsubmit = function(e) {
         var kontenInput = document.querySelector('#kontenInput');
-        kontenInput.value = quill.root.innerHTML;
+        var html = quill.root.innerHTML;
+        if (html === '<p><br></p>') {
+            html = ''; // Biarkan kosong agar backend memunculkan error validasi
+        }
+        kontenInput.value = html;
     };
 </script>
 @endpush
