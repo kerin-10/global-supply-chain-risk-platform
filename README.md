@@ -1,70 +1,415 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌍 SupplyRisk - Global Shipping Risk Intelligence Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SupplyRisk merupakan aplikasi berbasis Laravel yang dikembangkan untuk membantu memantau risiko pengiriman internasional secara real-time. Sistem ini mengintegrasikan berbagai sumber data eksternal seperti informasi negara, cuaca, ekonomi, pelabuhan, berita global, serta nilai tukar mata uang sehingga pengguna dapat melakukan analisis risiko pengiriman secara lebih akurat.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Dashboard Monitoring Global
+- Monitoring Data Negara
+- Monitoring Cuaca Global
+- Monitoring Pelabuhan Global
+- Monitoring Nilai Tukar Mata Uang
+- Monitoring Berita Global
+- Analisis Sentimen Berita
+- Perhitungan Risiko Negara
+- Visualisasi Data
+- Perbandingan Negara
+- Watchlist Negara
+- Manajemen Artikel
+- Manajemen Pengguna
+- Sinkronisasi Data API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+# Teknologi yang Digunakan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Laravel 12
+- PHP 8.2+
+- MySQL
+- Bootstrap 5
+- Chart.js
+- Leaflet.js
+- Axios
+- TomSelect
+- Composer
+- Node.js
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# API yang Digunakan
 
-## Laravel Sponsors
+| API | Fungsi |
+|------|---------|
+| REST Countries API | Data Negara |
+| Open-Meteo API | Data Cuaca |
+| World Bank API | Data Ekonomi |
+| GNews API | Berita Global |
+| World Port Index | Data Pelabuhan |
+| Exchange Rate API | Nilai Tukar Mata Uang |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+# Persyaratan Sistem
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- PHP 8.2 atau lebih baru
+- Composer
+- Node.js
+- MySQL
+- Git
+- Koneksi Internet
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Cara Menggunakan Project dari GitHub
 
-## Code of Conduct
+## 1. Clone Repository
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone https://github.com/USERNAME/NAMA-REPOSITORY.git
+```
 
-## Security Vulnerabilities
+Masuk ke folder project
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cd NAMA-REPOSITORY
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# global-supply-chain-risk-platform
->>>>>>> d9350366550e6c3d6c2403ae456684398cdae8f5
+## 2. Install Dependency Laravel
+
+```bash
+composer install
+```
+
+---
+
+## 3. Install Dependency Frontend
+
+```bash
+npm install
+```
+
+---
+
+## 4. Copy File Environment
+
+Windows
+
+```bash
+copy .env.example .env
+```
+
+Linux / Mac
+
+```bash
+cp .env.example .env
+```
+
+---
+
+## 5. Generate Laravel Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## 6. Buat Database
+
+Misalnya
+
+```
+supplyrisk
+```
+
+---
+
+## 7. Atur Database
+
+Buka file
+
+```
+.env
+```
+
+Lalu ubah
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=supplyrisk
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+---
+
+## 8. Jalankan Migration
+
+```bash
+php artisan migrate
+```
+
+Jika project memiliki Seeder
+
+```bash
+php artisan db:seed
+```
+
+---
+
+## 9. Build Asset
+
+Development
+
+```bash
+npm run dev
+```
+
+Production
+
+```bash
+npm run build
+```
+
+---
+
+## 10. Jalankan Project
+
+```bash
+php artisan serve
+```
+
+Buka browser
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+# Konfigurasi API
+
+Masukkan API Key pada file
+
+```
+.env
+```
+
+Contoh
+
+```env
+GNEWS_API_KEY=xxxxxxxxxxxxxxxx
+
+EXCHANGE_RATE_API_KEY=xxxxxxxxxxxxxxxx
+```
+
+Pastikan seluruh API dapat diakses sebelum melakukan sinkronisasi data.
+
+---
+
+# Sinkronisasi Data
+
+Sebelum menggunakan sistem, lakukan sinkronisasi agar data yang tersimpan berasal dari API terbaru.
+
+## Sinkronisasi Data Negara ✅
+
+Mengambil data dari REST Countries API
+
+```bash
+php artisan countries:sync
+```
+
+Data yang diperbarui
+
+- Nama Negara
+- ISO2
+- ISO3
+- Populasi
+- Mata Uang
+- Bahasa
+- Ibu Kota
+- Luas Wilayah
+- Koordinat
+- Bendera
+
+---
+
+## Sinkronisasi Data Cuaca
+
+Melalui Website
+
+```
+Dashboard
+↓
+Pilih Negara
+↓
+Klik Sinkronisasi
+```
+
+Data yang diperbarui
+
+- Suhu
+- Curah Hujan
+- Kelembaban
+- Kecepatan Angin
+- Risiko Badai
+
+---
+
+## Sinkronisasi Data Ekonomi
+
+Melalui Website
+
+```
+Dashboard
+↓
+Pilih Negara
+↓
+Klik Sinkronisasi
+```
+
+Data yang diperbarui
+
+- GDP
+- Inflasi
+- Populasi
+- Nilai Ekspor
+- Nilai Impor
+
+---
+
+## Sinkronisasi Data Berita
+
+Melalui Website
+
+```
+Dashboard
+↓
+Berita
+↓
+Pilih Negara
+↓
+Klik Muat & Analisis Berita
+```
+
+Data yang diperbarui
+
+- Judul Berita
+- Isi Berita
+- Analisis Sentimen
+- Skor Positif
+- Skor Negatif
+
+---
+
+## Sinkronisasi Data Pelabuhan
+
+Melalui Website
+
+```
+Dashboard
+↓
+Pelabuhan
+↓
+Klik Sinkronisasi Pelabuhan
+```
+
+Data yang diperbarui
+
+- Nama Pelabuhan
+- Nomor WPI
+- Lokasi Pelabuhan
+- Kemacetan Pelabuhan
+
+---
+
+# Sinkronisasi Melalui Terminal
+
+**Command yang sudah tersedia pada proyek saat ini:**
+
+```bash
+php artisan countries:sync
+```
+
+> Jika nanti ditambahkan Artisan Command untuk sinkronisasi data lainnya, pengguna dapat menjalankannya melalui terminal, misalnya:
+
+```bash
+php artisan weather:sync
+php artisan economy:sync
+php artisan ports:sync
+php artisan news:sync
+php artisan sync:all
+```
+
+> **Catatan:** Command di atas baru dapat digunakan setelah dibuat pada proyek. Jika belum tersedia, gunakan fitur sinkronisasi melalui halaman web.
+
+---
+
+# Struktur Folder
+
+```
+app/
+│
+├── Console/
+├── Http/
+├── Models/
+├── Services/
+├── Providers/
+│
+resources/
+│
+├── views/
+├── css/
+├── js/
+│
+routes/
+│
+├── web.php
+├── api.php
+│
+public/
+storage/
+database/
+```
+
+---
+
+# Login
+
+Administrator
+
+```
+Email    :
+Password :
+```
+
+User
+
+```
+Email    :
+Password :
+```
+
+---
+
+# Catatan
+
+- Pastikan MySQL aktif.
+- Pastikan koneksi internet tersedia.
+- Pastikan API Key sudah benar.
+- Jalankan `php artisan countries:sync` sebelum menggunakan sistem untuk pertama kali.
+- Sinkronisasi data lainnya dapat dilakukan melalui halaman web.
+
+---
+
+# Pengembang
+
+**SupplyRisk - Global Shipping Risk Intelligence Platform**
+
+Dikembangkan menggunakan **Laravel Framework** sebagai media pembelajaran dan implementasi sistem monitoring risiko pengiriman global berbasis data real-time.
